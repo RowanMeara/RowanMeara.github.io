@@ -1,3 +1,3 @@
-# Rowan Meara Personal Website
+# Github Readme
 
 My website uses Jekyll. 
