@@ -1,5 +1,4 @@
 <aside>
-  <div class="container">
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -11,7 +10,7 @@
           </button>
           <a class="navbar-brand" href="#">{{ site.title }}</a>
         </div>
-        <div id="navbar" class="collapse navbar-collapse">
+        <div id="navbar" class="collapse navbar-collapse navbar-right">
           <ul class="nav navbar-nav">
             {% for page in site.pages %} {% if page.title %}
             <li><a href="{{ page.url | prepend: site.baseurl }}">{{ page.title }}</a></li>
@@ -21,8 +20,6 @@
         </div><!--/.nav-collapse -->
       </div>
     </nav>
-
-  </div>
 </aside>
 
 <header>
