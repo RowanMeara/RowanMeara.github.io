@@ -24,7 +24,12 @@ h1 {
 	}
 }
 h2 {
-	font-size: 2em;
+	font-size: 3em;
+	text-align: center;
+}
+.subtitle {
+	color: $light;
+	font-size: 4vh;
 }
 a,
 a:visited {
@@ -41,7 +46,7 @@ header {
 	padding: 0px 15px;
 	text-align: center;
 	margin: 50px 0 0;
-	height: 50vh;
+	height: 1vh;
 	display: flex;
 	justify-content: center;
 	align-items: center;
