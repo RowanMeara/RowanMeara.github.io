@@ -2,58 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a8e2b7a7-8bca-4f1a-bbf3-363ede438e78" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/profile.png" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/404.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_includes/disqus_comments.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_includes/google-analytics.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_includes/icon-github.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_includes/icon-github.svg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_includes/icon-linkedin.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_includes/icon-linkedin.svg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_includes/icon-twitter.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_includes/icon-twitter.svg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_layouts/home.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_layouts/layout_404.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_layouts/page.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_layouts/post.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_pages/about.md" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_pages/projects.md" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_posts/2017-06-05-welcome-to-jekyll.markdown" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_sass/_404.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_sass/_base.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_sass/_layout.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_sass/_syntax-highlighting.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_sass/minima.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_sass/minima/_404.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_sass/minima/_base.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_sass/minima/_layout.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_sass/minima/_syntax-highlighting.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/css/bootstrap-theme.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/css/bootstrap-theme.css.map" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/css/bootstrap-theme.min.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/css/bootstrap-theme.min.css.map" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/css/bootstrap.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/css/bootstrap.css.map" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/css/bootstrap.min.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/css/bootstrap.min.css.map" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/fonts/glyphicons-halflings-regular.eot" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/fonts/glyphicons-halflings-regular.svg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/fonts/glyphicons-halflings-regular.ttf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/fonts/glyphicons-halflings-regular.woff" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/fonts/glyphicons-halflings-regular.woff2" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/js/bootstrap.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/js/bootstrap.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/js/npm.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/css/main.scss" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile" afterPath="$PROJECT_DIR$/Gemfile" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile.lock" afterPath="$PROJECT_DIR$/Gemfile.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/_config.yml" afterPath="$PROJECT_DIR$/_config.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/_includes/footer.html" afterPath="$PROJECT_DIR$/_includes/footer.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/_includes/head.html" afterPath="$PROJECT_DIR$/_includes/head.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/_includes/header.html" afterPath="$PROJECT_DIR$/_includes/header.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/_layouts/default.html" afterPath="$PROJECT_DIR$/_layouts/default.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -67,16 +17,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="450">
-      <file leaf-file-name="about.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/_includes/about.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="contact.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/_includes/contact.html">
           <provider selected="true" editor-type-id="text-editor">
@@ -137,21 +77,31 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_config.yml" pinned="false" current-in-tab="false">
+      <file leaf-file-name="_config.yml" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/_config.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="319">
-              <caret line="40" column="7" lean-forward="false" selection-start-line="40" selection-start-column="7" selection-end-line="40" selection-end-column="7" />
+            <state relative-caret-position="384">
+              <caret line="27" column="17" lean-forward="false" selection-start-line="27" selection-start-column="17" selection-end-line="27" selection-end-column="17" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="default.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="default.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/_layouts/default.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="352">
-              <caret line="16" column="0" lean-forward="false" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+            <state relative-caret-position="176">
+              <caret line="8" column="0" lean-forward="true" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="44">
+              <caret line="2" column="9" lean-forward="true" selection-start-line="2" selection-start-column="9" selection-end-line="2" selection-end-column="9" />
               <folding />
             </state>
           </provider>
@@ -184,8 +134,8 @@
         <option value="$PROJECT_DIR$/index.html" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/_includes/header.html" />
-        <option value="$PROJECT_DIR$/_config.yml" />
         <option value="$PROJECT_DIR$/_layouts/default.html" />
+        <option value="$PROJECT_DIR$/_config.yml" />
       </list>
     </option>
   </component>
@@ -291,12 +241,12 @@
       <updated>1508210183685</updated>
       <workItem from="1508210186820" duration="6000" />
       <workItem from="1508210229118" duration="2007000" />
-      <workItem from="1508214906367" duration="2389000" />
+      <workItem from="1508214906367" duration="3012000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4402000" />
+    <option name="totallyTimeSpent" value="5025000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="276" y="766" width="2038" height="1007" extended-state="0" />
@@ -464,10 +414,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/_config.yml">
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="319">
-          <caret line="40" column="7" lean-forward="false" selection-start-line="40" selection-start-column="7" selection-end-line="40" selection-end-column="7" />
+        <state relative-caret-position="44">
+          <caret line="2" column="9" lean-forward="true" selection-start-line="2" selection-start-column="9" selection-end-line="2" selection-end-column="9" />
           <folding />
         </state>
       </provider>
@@ -482,8 +432,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/_layouts/default.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="16" column="0" lean-forward="false" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+        <state relative-caret-position="176">
+          <caret line="8" column="0" lean-forward="true" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/_config.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="384">
+          <caret line="27" column="17" lean-forward="false" selection-start-line="27" selection-start-column="17" selection-end-line="27" selection-end-column="17" />
           <folding />
         </state>
       </provider>
