@@ -1,35 +1,55 @@
-# Welcome to Jekyll!
-#
-# This config file is meant for settings that affect your whole blog, values
-# which you are expected to set up once and rarely edit after that. If you find
-# yourself editing this file very often, consider using Jekyll's data files
-# feature for the data you need to update frequently.
-#
-# For technical reasons, this file is *NOT* reloaded automatically when you use
-# 'bundle exec jekyll serve'. If you change this file, please restart the server process.
-
 # Site settings
-# These are used to personalize your new site. If you look in the HTML files,
-# you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
-# You can create any custom variable you would like, and they will be accessible
-# in the templates via {{ site.myvariable }}.
 title: Rowan Meara
 email: rowanmeara@gmail.com
-description: > # this means to ignore newlines until "baseurl:"
-  Rowan Meara: Developer.
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://rowanmeara.com" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: 
-github_username:  RowanMeara
-linkedin_username: RowanMeara
-author: Rowan Meara
+url: http://rowanmeara.com
+description: "Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description."
+keywords: "Rowan, Rowan Meara, Software Engineer, Portfolio, Esports, SQL, Python, C, JavaScript"
+skills: "Software Engineer -- Seattle"
+meta_author: Meara Rowan
+
+# Google webmaster tools
+google_verify:
+
+# https://ssl.bing.com/webmaster/configure/verify/ownership Option 2 content= goes here
+bing_verify:
+
+# Contact form:
+# - static : pass through formspree.io to validate email sending
+# - disqus : replace contact form by disqus thread
+# - comment the line below if you want to stick with the default PHP contact form
+contact: static
+
+# If you use disqus you need disqus shortname
+# https://help.disqus.com/customer/portal/articles/466208
+disqus_shortname: myshortname
+
+# Color settings (hex-codes without the leading hash-tag)
+color:
+  primary: 303F9F' #80B3FF
+  primary-rgb: "24,288,156" #"128,179,255"
+  secondary: 2c3e50 #FD6E8A
+  secondary-dark: 233140 #A2122F
+
+# Footer settings
+footer:
+  copyright: Rowan Meara
+  location: Seattle
+  social: Around the Web
+  credits: Credits
+
+# Social networks usernames (many more available: google-plus, flickr, dribbble, pinterest, instagram, tumblr, linkedin, etc.)
+social:
+  - title: github
+    url: http://github.com/RowanMeara
+
+# Postal address (add as many lines as necessary)
+address:
+  - line: 1726 NW 64th St
+  - line: Seattle, WA 98107
+
+# Credits content
+credits: ''
 
 # Build settings
-sass:
-  sass_dir: _sass
-include: ['_pages']
-kramdown: 
-  input: GFM
-exclude:
-  - Gemfile
-  - Gemfile.lock
+markdown: kramdown
+permalink: pretty
