@@ -2,7 +2,7 @@
 title: Rowan Meara
 email: rowanmeara@gmail.com
 url: http://rowanmeara.com
-description: "Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description."
+description: "Personal website of Rowan Meara."
 keywords: "Rowan, Rowan Meara, Software Engineer, Portfolio, Esports, SQL, Python, C, JavaScript"
 skills: "Software Engineer -- Seattle"
 meta_author: Meara Rowan
@@ -44,6 +44,7 @@ social:
 
 # Postal address (add as many lines as necessary)
 address:
+  - line: rowanmeara@gmail.com
   - line: 1726 NW 64th St
   - line: Seattle, WA 98107
 

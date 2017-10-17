@@ -95,6 +95,11 @@ header img {
     margin: 0 auto 20px;
 }
 
+.img-profile {
+    border-radius: 50%;
+    height: 300px;
+}
+
 header .intro-text .name {
     display: block;
     text-transform: uppercase;
