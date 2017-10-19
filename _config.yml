@@ -40,7 +40,9 @@ footer:
 # Social networks usernames (many more available: google-plus, flickr, dribbble, pinterest, instagram, tumblr, linkedin, etc.)
 social:
   - title: github
-    url: http://github.com/RowanMeara
+    url: https://github.com/RowanMeara
+  - title: linkedin
+    url: https://linkedin.com/in/RowanMeara
 
 # Postal address (add as many lines as necessary)
 address:
