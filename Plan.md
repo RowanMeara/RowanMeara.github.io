@@ -43,7 +43,7 @@ This plan outlines the development of a professional portfolio website for Rowan
 - TypeScript for type safety
 
 ### Deployment
-- Vercel for hosting and deployment
+- Github Pages for hosting and deployment
 - GitHub for version control
 
 ## Implementation Timeline
