@@ -76,7 +76,7 @@ This plan outlines the development of a professional portfolio website for Rowan
 
 ## Project Structure
 ```
-portfolio/
+.
 ├── src/
 │   ├── components/
 │   │   ├── layout/
@@ -96,13 +96,17 @@ portfolio/
 ```
 
 ## Next Steps
-1. Initialize Next.js project with TypeScript
-2. Set up Tailwind CSS
+1. ✅ Initialize Next.js project with TypeScript
+2. ✅ Set up Tailwind CSS
 3. Create basic layout components
+   - Create components directory structure
+   - Implement Header component
+   - Implement Footer component
+   - Implement Navigation component
 4. Begin implementing home page
 5. Set up project data structure
-6. Configure Next.js for static export
-7. Set up GitHub Pages deployment workflow
+6. ✅ Configure Next.js for static export
+7. ✅ Set up GitHub Pages deployment workflow
 
 ## Notes
 - Focus on performance and accessibility
