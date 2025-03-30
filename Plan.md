@@ -43,8 +43,10 @@ This plan outlines the development of a professional portfolio website for Rowan
 - TypeScript for type safety
 
 ### Deployment
-- Github Pages for hosting and deployment
+- GitHub Pages for hosting and deployment
 - GitHub for version control
+- Next.js static export configuration for GitHub Pages compatibility
+- Custom domain setup (optional)
 
 ## Implementation Timeline
 
@@ -86,8 +88,11 @@ portfolio/
 ├── public/
 │   ├── images/
 │   └── projects/
-└── content/
-    └── projects/
+├── content/
+│   └── projects/
+└── .github/
+    └── workflows/
+        └── deploy.yml
 ```
 
 ## Next Steps
@@ -96,10 +101,15 @@ portfolio/
 3. Create basic layout components
 4. Begin implementing home page
 5. Set up project data structure
+6. Configure Next.js for static export
+7. Set up GitHub Pages deployment workflow
 
 ## Notes
 - Focus on performance and accessibility
 - Ensure mobile-first responsive design
 - Implement dark/light mode
 - Regular commits and documentation
-- Test across different browsers and devices 
+- Test across different browsers and devices
+- Configure basePath in Next.js for GitHub Pages subdirectory
+- Set up proper 404 handling for GitHub Pages
+- Ensure all assets use relative paths 
