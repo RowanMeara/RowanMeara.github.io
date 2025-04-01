@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Layout from "@/components/layout/Layout";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -17,9 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className="min-h-screen bg-white dark:bg-gray-900">
-        <main className="container py-8">
+        <Layout>
           {children}
-        </main>
+        </Layout>
       </body>
     </html>
   );
