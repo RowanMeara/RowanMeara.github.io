@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
-  basePath: '/RowanMeara.github.io',
+  basePath: '',
   images: {
     unoptimized: true,
   },
