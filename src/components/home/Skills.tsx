@@ -19,9 +19,9 @@ const skills = [
 
 const Skills = () => {
   return (
-    <section className="py-16 bg-white dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
+    <section className="py-20 bg-white dark:bg-gray-900">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -42,7 +42,7 @@ const Skills = () => {
           </motion.p>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {skills.map((skillGroup, index) => (
             <motion.div
               key={skillGroup.category}
@@ -50,19 +50,19 @@ const Skills = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700"
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow"
             >
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
                 {skillGroup.category}
               </h3>
-              <ul className="space-y-2">
+              <ul className="space-y-4">
                 {skillGroup.items.map((skill) => (
                   <li
                     key={skill}
                     className="flex items-center text-gray-600 dark:text-gray-300"
                   >
                     <svg
-                      className="h-5 w-5 text-blue-500 mr-2"
+                      className="h-5 w-5 text-blue-500 mr-3"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"

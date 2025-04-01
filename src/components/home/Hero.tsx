@@ -5,24 +5,24 @@ import { motion } from 'framer-motion';
 
 const Hero = () => {
   return (
-    <div className="relative overflow-hidden">
+    <section className="relative min-h-[calc(100vh-4rem)] flex items-center">
       {/* Animated background */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
-        <div className="text-center">
+      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
               Hi, I'm{' '}
               <span className="text-blue-600 dark:text-blue-400">Rowan Meara</span>
             </h1>
-            <p className="mt-6 text-xl sm:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            <p className="mt-6 text-xl sm:text-2xl text-gray-600 dark:text-gray-300">
               Software Engineer specializing in building exceptional digital experiences
             </p>
           </motion.div>
@@ -48,7 +48,7 @@ const Hero = () => {
           </motion.div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
