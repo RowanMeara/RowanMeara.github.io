@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -10,7 +9,6 @@ type NavLink = {
 };
 
 export default function Navigation() {
-  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
   
   const navLinks: NavLink[] = [
@@ -19,23 +17,6 @@ export default function Navigation() {
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' },
   ];
-
-  // Handle scroll event to change header appearance
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
 
   // Check if the link is the current page
   const isActive = (path: string) => {
