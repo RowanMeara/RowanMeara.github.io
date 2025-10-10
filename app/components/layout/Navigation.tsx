@@ -2,21 +2,10 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-
-type NavLink = {
-  name: string;
-  href: string;
-};
+import { navigationLinks } from '../../data/navigation';
 
 export default function Navigation() {
   const pathname = usePathname();
-  
-  const navLinks: NavLink[] = [
-    { name: 'Home', href: '/' },
-    { name: 'Projects', href: '/projects' },
-    { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' },
-  ];
 
   // Check if the link is the current page
   const isActive = (path: string) => {
@@ -28,7 +17,7 @@ export default function Navigation() {
 
   return (
     <nav className="hidden sm:flex items-center space-x-1">
-      {navLinks.map((link) => (
+      {navigationLinks.map((link) => (
         <Link
           key={link.name}
           href={link.href}

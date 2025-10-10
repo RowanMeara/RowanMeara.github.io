@@ -23,18 +23,10 @@ export default function DistributedAnalyticsProject() {
             Distributed Analytics Platform
           </h1>
           <div className="flex flex-wrap gap-2 mb-6">
-            <span className="px-3 py-1 text-sm font-medium bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded">
-              Python
-            </span>
-            <span className="px-3 py-1 text-sm font-medium bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded">
-              TensorFlow
-            </span>
-            <span className="px-3 py-1 text-sm font-medium bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded">
-              Apache Spark
-            </span>
-            <span className="px-3 py-1 text-sm font-medium bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded">
-              AWS
-            </span>
+            <span className="tag-lg">Python</span>
+            <span className="tag-lg">TensorFlow</span>
+            <span className="tag-lg">Apache Spark</span>
+            <span className="tag-lg">AWS</span>
           </div>
         </div>
 

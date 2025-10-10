@@ -3,17 +3,11 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Navigation from './Navigation';
+import { navigationLinks } from '../../data/navigation';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-
-  const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'Projects', href: '/projects' },
-    { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' },
-  ];
 
   // Handle scroll event to change header appearance
   useEffect(() => {
@@ -105,7 +99,7 @@ export default function Header() {
       {isMenuOpen && (
         <div className="sm:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            {navigation.map((item) => (
+            {navigationLinks.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
