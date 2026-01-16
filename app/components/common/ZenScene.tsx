@@ -225,8 +225,7 @@ export default function ZenScene() {
               Welcome to My Garden
             </h1>
             <p className="text-lg md:text-xl text-white dark:text-gray-200 max-w-2xl mx-auto mb-10 font-serif drop-shadow-md">
-              I build robust, scalable software systems and web applications with a focus on 
-              distributed systems, machine learning, and modern web technologies.
+              I work on Pokémon GO and have extensive experience building robust, scalable distributed systems.
             </p>
             <div className="flex justify-center">
               <a
