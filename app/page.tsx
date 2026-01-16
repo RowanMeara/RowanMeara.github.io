@@ -1,6 +1,3 @@
-import Link from 'next/link';
-import { projects } from './data/projects';
-import { ProjectCard } from './components/common/ProjectCard';
 import { Section } from './components/common/Section';
 import ZenScene from './components/common/ZenScene';
 
@@ -33,31 +30,6 @@ export default function Home() {
         </div>
       </Section>
       
-      {/* Projects Section */}
-      <Section background="gray">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Featured Projects
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              A selection of my recent work. These projects showcase my skills and approach to solving complex problems.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
-          </div>
-          
-          <div className="text-center mt-12">
-            <Link href="/projects" className="button-primary">
-              View All Projects
-            </Link>
-          </div>
-        </div>
-      </Section>
     </div>
   );
 }
