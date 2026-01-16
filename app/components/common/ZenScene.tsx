@@ -228,15 +228,11 @@ export default function ZenScene() {
               I build robust, scalable software systems and web applications with a focus on 
               distributed systems, machine learning, and modern web technologies.
             </p>
-            <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+            <div className="flex justify-center">
               <a
-                href="/projects"
-                className="px-8 py-3 bg-white/90 dark:bg-gray-800/90 text-gray-900 dark:text-white font-medium rounded-lg shadow-lg hover:bg-white dark:hover:bg-gray-800 transition duration-300 backdrop-blur-sm"
-              >
-                View Projects
-              </a>
-              <a
-                href="/contact"
+                href="https://www.linkedin.com/in/rowanmeara/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="px-8 py-3 bg-transparent border-2 border-white/80 dark:border-gray-200/80 text-white dark:text-gray-100 font-medium rounded-lg hover:bg-white/20 dark:hover:bg-gray-200/20 transition duration-300 backdrop-blur-sm"
               >
                 Contact Me
