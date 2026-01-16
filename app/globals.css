@@ -41,3 +41,33 @@ body {
 .button-secondary {
   @apply px-8 py-3 bg-transparent border-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-300;
 }
+
+/* Smooth scrolling for zen scene */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Performance optimizations for animations */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Animation keyframes for zen elements */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes gentle-pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
