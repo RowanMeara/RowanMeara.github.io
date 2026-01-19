@@ -186,7 +186,7 @@ export default function ZenScene() {
               <div className="absolute inset-0 bg-stone-50/90 dark:bg-stone-800/90" />
             </div>
             {/* Handle */}
-            <div className="absolute right-8 top-1/2 -translate-y-1/2 w-2 h-16 bg-stone-800 dark:bg-stone-400 rounded-full" />
+            <div className="absolute right-8 top-2/3 w-2 h-16 bg-stone-800 dark:bg-stone-400 rounded-full" />
           </div>
         </div>
 
@@ -218,7 +218,7 @@ export default function ZenScene() {
               <div className="absolute inset-0 bg-stone-50/90 dark:bg-stone-800/90" />
             </div>
             {/* Handle */}
-            <div className="absolute left-8 top-1/2 -translate-y-1/2 w-2 h-16 bg-stone-800 dark:bg-stone-400 rounded-full" />
+            <div className="absolute left-8 top-2/3 w-2 h-16 bg-stone-800 dark:bg-stone-400 rounded-full" />
           </div>
         </div>
 
