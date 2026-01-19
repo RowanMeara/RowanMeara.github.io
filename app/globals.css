@@ -8,7 +8,6 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -21,7 +20,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
 }
 
 /* Smooth scrolling */
@@ -29,31 +28,21 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Performance optimizations */
-* {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Simple animations placeholder for tiles */
+.tile {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  width: 72px; height: 72px; border-radius: 6px; margin: 4px; font-weight: 700; font-size: 20px;
+  transition: transform 120ms ease, background 120ms ease, color 120ms ease;
 }
-
-/* Selection styling */
-::selection {
-  background: rgba(168, 162, 158, 0.3);
+.tile--spawn {
+  animation: tileSpawn 180ms ease-out;
 }
-
-/* Scrollbar styling for webkit browsers */
-::-webkit-scrollbar {
-  width: 6px;
+.tile--merge {
+  animation: tileMerge 180ms ease-out;
 }
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(168, 162, 158, 0.4);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(168, 162, 158, 0.6);
+@keyframes tileSpawn { from { transform: scale(0.2); } to { transform: scale(1); } }
+@keyframes tileMerge {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
 }
