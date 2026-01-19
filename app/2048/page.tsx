@@ -105,23 +105,28 @@ function moveBoard(board: number[][], dir: 'LEFT'|'UP'|'RIGHT'|'DOWN'):
       moved = !before.every((row, i) => row.every((v, j) => v === b[i][j]));
       break;
     }
-    case 'DOWN': {
-      const before = b.map(r => r.slice());
-      const t = transpose(b);
-      const rev = t.map(col => col.slice().reverse());
-      const movedCols = rev.map((col) => {
-        const { newLine, gained } = slideLine(col);
-        gainedTotal += gained;
-        return newLine.reverse();
-      });
-      const unreversed = movedCols as any;
-      b = transpose(unreversed.map((col: number[]) => col));
-      // Since we transposed twice, better reconstruct properly
-      const rev2 = transpose(b).map(col => col.slice().reverse());
-      b = transpose(rev2 as any);
-      moved = !board.every((row, i) => row.every((v, j) => b[i][j] === v));
-      break;
+case 'DOWN': {
+  // Down move: Down move: process each column from bottom to top with sliding
+  const before = b.map(r => r.slice());
+  let movedLocal = false;
+  let gainLocal = 0;
+  let newBoard = board.map(row => row.slice());
+  for (let c = 0; c < SIZE; c++) {
+    const col: number[] = [];
+    for (let r = SIZE - 1; r >= 0; r--) col.push(newBoard[r][c]);
+    const { newLine, gained } = slideLine(col);
+    gainLocal += gained;
+    for (let i = 0; i < SIZE; i++) {
+      newBoard[SIZE - 1 - i][c] = newLine[i];
     }
+  }
+  // detect move
+  movedLocal = !before.every((row, r) => row.every((v, c) => newBoard[r][c] === v));
+  b = newBoard;
+  moved = movedLocal;
+  gainedTotal += gainLocal;
+  break;
+}
   }
   return { board: b, gained: gainedTotal, moved };
 }
