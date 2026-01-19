@@ -1,35 +1,53 @@
-import { Section } from './components/common/Section';
 import ZenScene from './components/common/ZenScene';
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
-      {/* Zen Scene Hero Section */}
+    <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
+      {/* Zen Scene Hero */}
       <ZenScene />
 
       {/* About Section */}
-      <Section background="white">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              About Me
-            </h2>
+      <section className="relative py-32 px-6 bg-stone-50 dark:bg-stone-950">
+        <div className="max-w-2xl mx-auto">
+          <div className="w-12 h-px bg-stone-300 dark:bg-stone-700 mb-12" />
+
+          <h2 className="text-2xl md:text-3xl font-light text-stone-800 dark:text-stone-200 mb-8 tracking-wide">
+            About
+          </h2>
+
+          <div className="space-y-6 text-stone-600 dark:text-stone-400 leading-relaxed">
+            <p>
+              Software engineer with expertise in building distributed systems,
+              machine learning applications, and modern web technologies.
+            </p>
+            <p>
+              I approach each project with a focus on simplicity, quality, and
+              thoughtful design. Currently based in Seattle.
+            </p>
           </div>
-          <div className="max-w-3xl mx-auto">
-            <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
-              I&apos;m a software engineer with expertise in building distributed systems, 
-              machine learning applications, and modern web technologies. With a passion for 
-              creating efficient, scalable solutions, I approach each project with a focus on 
-              quality and user experience.
-            </p>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
-              Based in San Francisco, I&apos;m constantly exploring new technologies and methodologies 
-              to improve the way we build software.
-            </p>
+
+          <div className="mt-16 pt-16 border-t border-stone-200 dark:border-stone-800">
+            <div className="flex flex-wrap gap-8 text-sm text-stone-500 dark:text-stone-500">
+              <a
+                href="https://www.linkedin.com/in/rowanmeara/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-stone-800 dark:hover:text-stone-300 transition-colors duration-300"
+              >
+                LinkedIn
+              </a>
+              <a
+                href="https://github.com/RowanMeara"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-stone-800 dark:hover:text-stone-300 transition-colors duration-300"
+              >
+                GitHub
+              </a>
+            </div>
           </div>
         </div>
-      </Section>
-      
+      </section>
     </div>
   );
 }
