@@ -20,6 +20,7 @@ export default function SnakeGame() {
   const [highScore, setHighScore] = useState(0);
 
   const directionRef = useRef(direction);
+  const lastDirectionRef = useRef(direction); // Track the direction used in last game tick
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
 
   const generateFood = useCallback((currentSnake: Position[]): Position => {
@@ -39,6 +40,7 @@ export default function SnakeGame() {
     setFood(generateFood(initialSnake));
     setDirection('RIGHT');
     directionRef.current = 'RIGHT';
+    lastDirectionRef.current = 'RIGHT';
     setGameOver(false);
     setScore(0);
     setIsPlaying(true);
@@ -48,6 +50,9 @@ export default function SnakeGame() {
     setSnake(prevSnake => {
       const head = { ...prevSnake[0] };
       const currentDirection = directionRef.current;
+
+      // Update lastDirectionRef so key handler knows the actual direction of movement
+      lastDirectionRef.current = currentDirection;
 
       switch (currentDirection) {
         case 'UP':
@@ -122,13 +127,14 @@ export default function SnakeGame() {
         return;
       }
 
-      const currentDir = directionRef.current;
+      // Use lastDirectionRef to prevent 180-degree turns even with rapid key presses
+      const lastDir = lastDirectionRef.current;
 
       switch (e.key) {
         case 'ArrowUp':
         case 'w':
         case 'W':
-          if (currentDir !== 'DOWN') {
+          if (lastDir !== 'DOWN') {
             setDirection('UP');
             directionRef.current = 'UP';
           }
@@ -136,7 +142,7 @@ export default function SnakeGame() {
         case 'ArrowDown':
         case 's':
         case 'S':
-          if (currentDir !== 'UP') {
+          if (lastDir !== 'UP') {
             setDirection('DOWN');
             directionRef.current = 'DOWN';
           }
@@ -144,7 +150,7 @@ export default function SnakeGame() {
         case 'ArrowLeft':
         case 'a':
         case 'A':
-          if (currentDir !== 'RIGHT') {
+          if (lastDir !== 'RIGHT') {
             setDirection('LEFT');
             directionRef.current = 'LEFT';
           }
@@ -152,7 +158,7 @@ export default function SnakeGame() {
         case 'ArrowRight':
         case 'd':
         case 'D':
-          if (currentDir !== 'LEFT') {
+          if (lastDir !== 'LEFT') {
             setDirection('RIGHT');
             directionRef.current = 'RIGHT';
           }
