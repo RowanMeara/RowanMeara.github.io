@@ -11,7 +11,7 @@ export default function SimonGame() {
   const [playing, setPlaying] = useState(false);
   const [step, setStep] = useState(0);
   const [flash, setFlash] = useState<number | null>(null);
-  const timerRef = useRef<any>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const start = () => {
     const first = Math.floor(Math.random()*COLORS.length);

@@ -147,7 +147,7 @@ export default function MinesweeperGame() {
       </div>
       <div className="grid grid-cols-9 gap-0">
         {board.map((row, r) => (
-          row.map((cell, c) => ( renderCell(cell as any, r, c) ))
+          row.map((cell, c) => ( renderCell(cell, r, c) ))
         ))}
       </div>
       <button onClick={reset} className="mt-6 px-4 py-2 border rounded">New Game</button>

@@ -62,12 +62,6 @@ function moveBoard(board: number[][], dir: 'LEFT'|'UP'|'RIGHT'|'DOWN'):
   let moved = false;
   let gainedTotal = 0;
   let b: number[][] = board.map(r => r.slice());
-  const applyLeftToRows = (rows: number[][]): { rowsOut: number[][]; gained: number }[] => {
-    return rows.map(row => {
-      const { newLine, gained } = slideLine(row);
-      return { newLine, gained };
-    }).map(x => x as any);
-  };
   switch (dir) {
     case 'LEFT': {
       const before = b.map(r => r.slice());
@@ -100,7 +94,7 @@ function moveBoard(board: number[][], dir: 'LEFT'|'UP'|'RIGHT'|'DOWN'):
         gainedTotal += gained;
         return newLine;
       });
-      const after = transpose(movedCols as any);
+      const after = transpose(movedCols);
       b = after;
       moved = !before.every((row, i) => row.every((v, j) => v === b[i][j]));
       break;
@@ -110,7 +104,7 @@ case 'DOWN': {
   const before = b.map(r => r.slice());
   let movedLocal = false;
   let gainLocal = 0;
-  let newBoard = board.map(row => row.slice());
+  const newBoard = board.map(row => row.slice());
   for (let c = 0; c < SIZE; c++) {
     const col: number[] = [];
     for (let r = SIZE - 1; r >= 0; r--) col.push(newBoard[r][c]);

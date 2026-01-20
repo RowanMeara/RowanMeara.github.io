@@ -19,7 +19,7 @@ export default function PongGame() {
     const leftPad = { x: 20, y: H/2 - 40, w: 10, h: 80 };
     const rightPad = { x: W - 30, y: H/2 - 40, w: 10, h: 80 };
 
-    let ball = { x: W/2, y: H/2, vx: 3, vy: 2, r: 6 };
+    const ball = { x: W/2, y: H/2, vx: 3, vy: 2, r: 6 };
 
     const keys = new Set<string>();
 
