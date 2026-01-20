@@ -5,6 +5,17 @@ import Link from 'next/link';
 
 const SIZE = 4;
 
+interface Tile {
+  id: number;
+  value: number;
+  row: number;
+  col: number;
+  isNew?: boolean;
+  isMerged?: boolean;
+}
+
+let nextTileId = 0;
+
 function emptyBoard(): number[][] {
   return Array.from({ length: SIZE }, () => Array.from({ length: SIZE }, () => 0));
 }
@@ -127,21 +138,41 @@ case 'DOWN': {
 
 export default function Game2048() {
   const [board, setBoard] = useState<number[][]>(emptyBoard);
+  const [tiles, setTiles] = useState<Tile[]>([]);
   const [score, setScore] = useState(0);
   const [best, setBest] = useState<number>(0);
   const [anim, setAnim] = useState<string[][]>(Array.from({ length: SIZE }, () => Array.from({ length: SIZE }, () => '')));
   const [started, setStarted] = useState(false);
   const [gameOver, setGameOver] = useState(false);
 
+  const boardToTiles = useCallback((b: number[][]): Tile[] => {
+    const result: Tile[] = [];
+    for (let r = 0; r < SIZE; r++) {
+      for (let c = 0; c < SIZE; c++) {
+        if (b[r][c] !== 0) {
+          result.push({
+            id: nextTileId++,
+            value: b[r][c],
+            row: r,
+            col: c,
+          });
+        }
+      }
+    }
+    return result;
+  }, []);
+
   const newGame = useCallback(() => {
+    nextTileId = 0;
     let b = emptyBoard();
     b = addRandom(addRandom(b));
     setBoard(b);
+    setTiles(boardToTiles(b));
     setScore(0);
     setGameOver(false);
     setStarted(true);
     setAnim(Array.from({ length: SIZE }, () => Array.from({ length: SIZE }, () => '')));
-  }, []);
+  }, [boardToTiles]);
 
   useEffect(() => {
     const saved = typeof window !== 'undefined' ? localStorage.getItem('cpu-2048-best') : null;
@@ -162,36 +193,93 @@ export default function Game2048() {
     setBoard(prevBoard => {
       const { board: movedBoard, gained, moved } = moveBoard(prevBoard, dir);
       if (!moved) return prevBoard;
+
       const finalBoard = addRandom(movedBoard);
-      // compute animation map
-      const newAnim = Array.from({ length: SIZE }, () => Array.from({ length: SIZE }, () => '')) as string[][];
-      for (let r = 0; r < SIZE; r++) {
-        for (let c = 0; c < SIZE; c++) {
-          if (prevBoard[r][c] !== finalBoard[r][c] && finalBoard[r][c] !== 0) {
-            newAnim[r][c] = prevBoard[r][c] === 0 ? 'spawn' : 'merge';
+
+      // Update tiles based on the new board state
+      setTiles(prevTiles => {
+        const newTiles: Tile[] = [];
+        const usedTiles = new Set<number>();
+
+        for (let r = 0; r < SIZE; r++) {
+          for (let c = 0; c < SIZE; c++) {
+            if (finalBoard[r][c] !== 0) {
+              const movedValue = movedBoard[r][c];
+              const finalValue = finalBoard[r][c];
+              const isNewTile = movedValue === 0 && finalValue !== 0;
+
+              if (isNewTile) {
+                newTiles.push({
+                  id: nextTileId++,
+                  value: finalValue,
+                  row: r,
+                  col: c,
+                  isNew: true,
+                });
+              } else {
+                // Find matching tile from previous state
+                let foundTile: Tile | undefined;
+
+                for (const oldTile of prevTiles) {
+                  if (usedTiles.has(oldTile.id)) continue;
+
+                  // Check if this tile could have moved to this position
+                  const couldMove =
+                    (dir === 'LEFT' && oldTile.row === r && oldTile.col >= c) ||
+                    (dir === 'RIGHT' && oldTile.row === r && oldTile.col <= c) ||
+                    (dir === 'UP' && oldTile.col === c && oldTile.row >= r) ||
+                    (dir === 'DOWN' && oldTile.col === c && oldTile.row <= r);
+
+                  if (couldMove && (oldTile.value === finalValue || oldTile.value === finalValue / 2)) {
+                    foundTile = oldTile;
+                    usedTiles.add(oldTile.id);
+                    break;
+                  }
+                }
+
+                if (foundTile) {
+                  newTiles.push({
+                    id: foundTile.id,
+                    value: finalValue,
+                    row: r,
+                    col: c,
+                    isMerged: finalValue !== foundTile.value,
+                  });
+                } else {
+                  newTiles.push({
+                    id: nextTileId++,
+                    value: finalValue,
+                    row: r,
+                    col: c,
+                  });
+                }
+              }
+            }
           }
         }
-      }
-      setAnim(newAnim);
-      // clear after delay
-      setTimeout(() => {
-        setAnim(Array.from({ length: SIZE }, () => Array.from({ length: SIZE }, () => '')));
-      }, 180);
-      // update score
+
+        return newTiles;
+      });
+
+      // Update score
       setScore(s => s + gained);
-      // handle game over (no moves left)
+
+      // Handle game over
       const anyMove = (mb: number[][]) => {
-        // simple check: is there any 0 cell or adjacent equal numbers horizontally/vertically
         for (let i=0;i<SIZE;i++) for (let j=0;j<SIZE;j++) if (mb[i][j] === 0) return true;
-        // check left/right
         for (let i=0;i<SIZE;i++) for (let j=0;j<SIZE-1;j++) if (mb[i][j] === mb[i][j+1]) return true;
-        // up/down
         for (let i=0;i<SIZE-1;i++) for (let j=0;j<SIZE;j++) if (mb[i][j] === mb[i+1][j]) return true;
         return false;
       };
       if (!anyMove(finalBoard)) {
         setGameOver(true);
       }
+
+      // Clear animation flags after a delay
+      setTimeout(() => {
+        setTiles(tiles => tiles.map(t => ({ ...t, isNew: false, isMerged: false })));
+      }, 200);
+
       return finalBoard;
     });
   }, []);
@@ -233,22 +321,81 @@ export default function Game2048() {
   // Render grid
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-stone-950 flex flex-col items-center justify-center p-4">
+      <style jsx>{`
+        .game-container {
+          position: relative;
+          width: ${SIZE * 72 + (SIZE - 1) * 8}px;
+          height: ${SIZE * 72 + (SIZE - 1) * 8}px;
+        }
+        .grid-cell {
+          position: absolute;
+          width: 72px;
+          height: 72px;
+          border-radius: 6px;
+          background: rgba(238, 228, 218, 0.35);
+        }
+        .tile {
+          position: absolute;
+          width: 72px;
+          height: 72px;
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          transition: all 0.15s ease-in-out;
+        }
+        .tile--new {
+          animation: spawn 0.2s ease;
+        }
+        .tile--merged {
+          animation: merge 0.2s ease;
+        }
+        @keyframes spawn {
+          0% { transform: scale(0); opacity: 0; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes merge {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.15); }
+          100% { transform: scale(1); }
+        }
+      `}</style>
       <div className="mb-8 text-center">
         <Link href="/projects" className="text-sm text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 transition-colors mb-4 inline-block">&larr; back</Link>
         <h1 className="text-3xl font-light text-stone-800 dark:text-stone-200 tracking-wide">2048</h1>
       </div>
-      <div style={{ display:'grid', gridTemplateColumns: `repeat(${SIZE}, 72px)`, gap: 8 }}>
-        {board.map((row, r) => row.map((val, c) => {
-          const key = `${r}-${c}`;
-          const isAnim = anim[r]?.[c];
-          const cls = `tile ${isAnim === 'spawn' ? 'tile--spawn' : isAnim === 'merge' ? 'tile--merge' : ''}`;
-          const bg = colorFor(val);
+      <div className="game-container">
+        {/* Background grid */}
+        {Array.from({ length: SIZE * SIZE }).map((_, i) => {
+          const r = Math.floor(i / SIZE);
+          const c = i % SIZE;
+          const top = r * (72 + 8);
+          const left = c * (72 + 8);
+          return <div key={`cell-${i}`} className="grid-cell" style={{ top, left }} />;
+        })}
+        {/* Tiles */}
+        {tiles.map(tile => {
+          const top = tile.row * (72 + 8);
+          const left = tile.col * (72 + 8);
+          const bg = colorFor(tile.value);
+          const cls = `tile ${tile.isNew ? 'tile--new' : ''} ${tile.isMerged ? 'tile--merged' : ''}`;
           return (
-            <div key={key} className={cls} style={{ width:72, height:72, borderRadius:6, display:'flex', alignItems:'center', justifyContent:'center', background:bg, color: val <= 4 ? '#776e65' : '#f9f6f2', fontWeight:700, fontSize: val > 999 ? 14 : 20 }}>
-              {val !== 0 ? val : ''}
+            <div
+              key={tile.id}
+              className={cls}
+              style={{
+                top,
+                left,
+                background: bg,
+                color: tile.value <= 4 ? '#776e65' : '#f9f6f2',
+                fontSize: tile.value > 999 ? 14 : 20,
+              }}
+            >
+              {tile.value}
             </div>
           );
-        }))}
+        })}
       </div>
       <div className="flex gap-4 mt-6">
         <button onClick={newGame} className="px-4 py-2 border rounded">New Game</button>
