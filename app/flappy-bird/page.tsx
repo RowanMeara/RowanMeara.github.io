@@ -13,82 +13,108 @@ export default function FlappyBirdGame() {
   const BIRD_RADIUS = 12;
   const PIPE_GAP = 120;
 
+  // Use refs to persist game state across renders
+  const gameStateRef = useRef({
+    birdY: WORLD_H / 2,
+    birdV: 0,
+    pipes: [] as { x: number; gapY: number; gapH: number }[],
+    lastPipe: 0,
+  });
+
   const reset = () => {
+    gameStateRef.current = {
+      birdY: WORLD_H / 2,
+      birdV: 0,
+      pipes: [],
+      lastPipe: 0,
+    };
     setScore(0);
     setPlaying(true);
   };
 
   useEffect(() => {
-    const canvas = canvasRef.current; if (!canvas) return;
-    const ctx = canvas.getContext('2d'); if (!ctx) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-    let birdY = WORLD_H / 2;
-    let birdV = 0;
     const gravity = 0.4;
-    const pipes: { x: number; gapY: number; gapH: number }[] = [];
-    let lastPipe = 0;
     let animationId: number;
 
     const loop = () => {
-      ctx.clearRect(0,0,WORLD_W, WORLD_H);
+      const state = gameStateRef.current;
+
+      // Draw background
+      ctx.fillStyle = '#87CEEB';
+      ctx.fillRect(0, 0, WORLD_W, WORLD_H);
 
       if (playing) {
-        // pipes
+        // Spawn pipes
         const now = Date.now();
-        if (now - lastPipe > 1500) {
-          lastPipe = now;
+        if (now - state.lastPipe > 1500) {
+          state.lastPipe = now;
           const gapY = 120 + Math.random() * 260;
-          pipes.push({ x: WORLD_W + 20, gapY, gapH: PIPE_GAP });
+          state.pipes.push({ x: WORLD_W + 20, gapY, gapH: PIPE_GAP });
         }
-        // update
-        birdV += gravity;
-        birdY += birdV;
-        for (const p of pipes) p.x -= 3;
 
-        // collision with ground
-        if (birdY > WORLD_H - BIRD_RADIUS) {
+        // Update physics
+        state.birdV += gravity;
+        state.birdY += state.birdV;
+
+        // Move pipes
+        for (const p of state.pipes) {
+          p.x -= 3;
+        }
+
+        // Collision with ground
+        if (state.birdY > WORLD_H - BIRD_RADIUS) {
           setPlaying(false);
           setBest(b => Math.max(b, Math.floor(score)));
         }
 
-        // collision with ceiling
-        if (birdY < BIRD_RADIUS) {
-          birdY = BIRD_RADIUS;
-          birdV = 0;
+        // Collision with ceiling
+        if (state.birdY < BIRD_RADIUS) {
+          state.birdY = BIRD_RADIUS;
+          state.birdV = 0;
         }
 
-        // collision with pipes
+        // Collision with pipes
         const birdX = WORLD_W / 2;
-        for (const p of pipes) {
+        for (const p of state.pipes) {
           // Check if bird is in horizontal range of pipe
           if (birdX + BIRD_RADIUS > p.x && birdX - BIRD_RADIUS < p.x + 60) {
             // Check if bird is outside the gap
-            if (birdY - BIRD_RADIUS < p.gapY - p.gapH/2 || birdY + BIRD_RADIUS > p.gapY + p.gapH/2) {
+            if (state.birdY - BIRD_RADIUS < p.gapY - p.gapH/2 ||
+                state.birdY + BIRD_RADIUS > p.gapY + p.gapH/2) {
               setPlaying(false);
               setBest(b => Math.max(b, Math.floor(score)));
             }
           }
         }
 
-        // remove offscreen pipes
-        while (pipes.length && pipes[0].x < -60) pipes.shift();
+        // Remove offscreen pipes
+        while (state.pipes.length && state.pipes[0].x < -60) {
+          state.pipes.shift();
+        }
 
-        // score tick
+        // Increment score
         setScore(s => Math.min(999, s + 0.01));
       }
 
-      // draw bird
-      ctx.fillStyle = 'orange';
-      ctx.beginPath(); ctx.arc(WORLD_W/2, birdY, BIRD_RADIUS, 0, Math.PI*2); ctx.fill();
-
-      // draw pipes
+      // Draw pipes
       ctx.fillStyle = 'green';
-      for (const p of pipes) {
-        // upper
+      for (const p of state.pipes) {
+        // Upper pipe
         ctx.fillRect(p.x, 0, 60, p.gapY - p.gapH/2);
-        // lower
+        // Lower pipe
         ctx.fillRect(p.x, p.gapY + p.gapH/2, 60, WORLD_H - (p.gapY + p.gapH/2));
       }
+
+      // Draw bird
+      ctx.fillStyle = 'orange';
+      ctx.beginPath();
+      ctx.arc(WORLD_W/2, state.birdY, BIRD_RADIUS, 0, Math.PI*2);
+      ctx.fill();
 
       animationId = requestAnimationFrame(loop);
     };
@@ -97,19 +123,24 @@ export default function FlappyBirdGame() {
 
     const flap = () => {
       if (playing) {
-        birdV = -6;
+        gameStateRef.current.birdV = -6;
       }
     };
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.code === 'Space') { e.preventDefault(); flap(); }
+      if (e.code === 'Space') {
+        e.preventDefault();
+        flap();
+      }
     };
+
     window.addEventListener('keydown', onKey);
 
     return () => {
       window.removeEventListener('keydown', onKey);
       cancelAnimationFrame(animationId);
     };
-  }, [playing, score]);
+  }, [playing]); // Only depend on playing, not score
 
   useEffect(() => {
     if (score > best) setBest(Math.floor(score));
