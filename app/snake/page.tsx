@@ -175,7 +175,7 @@ export default function SnakeGame() {
       {/* Header */}
       <div className="mb-8 text-center">
         <Link
-          href="/"
+          href="/projects"
           className="text-sm text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 transition-colors mb-4 inline-block"
         >
           &larr; back
