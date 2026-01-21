@@ -27,27 +27,55 @@ export default function FlappyBirdGame() {
     const gravity = 0.4;
     const pipes: { x: number; gapY: number; gapH: number }[] = [];
     let lastPipe = 0;
+    let animationId: number;
 
     const loop = () => {
-      if (!playing) return;
       ctx.clearRect(0,0,WORLD_W, WORLD_H);
-      // pipes
-      const now = Date.now();
-      if (now - lastPipe > 1500) {
-        lastPipe = now;
-        const gapY = 120 + Math.random() * 260;
-        pipes.push({ x: WORLD_W + 20, gapY, gapH: PIPE_GAP });
+
+      if (playing) {
+        // pipes
+        const now = Date.now();
+        if (now - lastPipe > 1500) {
+          lastPipe = now;
+          const gapY = 120 + Math.random() * 260;
+          pipes.push({ x: WORLD_W + 20, gapY, gapH: PIPE_GAP });
+        }
+        // update
+        birdV += gravity;
+        birdY += birdV;
+        for (const p of pipes) p.x -= 3;
+
+        // collision with ground
+        if (birdY > WORLD_H - BIRD_RADIUS) {
+          setPlaying(false);
+          setBest(b => Math.max(b, Math.floor(score)));
+        }
+
+        // collision with ceiling
+        if (birdY < BIRD_RADIUS) {
+          birdY = BIRD_RADIUS;
+          birdV = 0;
+        }
+
+        // collision with pipes
+        const birdX = WORLD_W / 2;
+        for (const p of pipes) {
+          // Check if bird is in horizontal range of pipe
+          if (birdX + BIRD_RADIUS > p.x && birdX - BIRD_RADIUS < p.x + 60) {
+            // Check if bird is outside the gap
+            if (birdY - BIRD_RADIUS < p.gapY - p.gapH/2 || birdY + BIRD_RADIUS > p.gapY + p.gapH/2) {
+              setPlaying(false);
+              setBest(b => Math.max(b, Math.floor(score)));
+            }
+          }
+        }
+
+        // remove offscreen pipes
+        while (pipes.length && pipes[0].x < -60) pipes.shift();
+
+        // score tick
+        setScore(s => Math.min(999, s + 0.01));
       }
-      // update
-      birdV += gravity;
-      birdY += birdV;
-      for (const p of pipes) p.x -= 3;
-      // collision with ground
-      if (birdY > WORLD_H - BIRD_RADIUS) {
-        setPlaying(false);
-      }
-      // remove offscreen pipes
-      while (pipes.length && pipes[0].x < -60) pipes.shift();
 
       // draw bird
       ctx.fillStyle = 'orange';
@@ -59,17 +87,19 @@ export default function FlappyBirdGame() {
         // upper
         ctx.fillRect(p.x, 0, 60, p.gapY - p.gapH/2);
         // lower
-        ctx.fillRect(p.x, p.gapY + p.gapH, 60, WORLD_H - (p.gapY + p.gapH));
+        ctx.fillRect(p.x, p.gapY + p.gapH/2, 60, WORLD_H - (p.gapY + p.gapH/2));
       }
 
-      // score tick
-      setScore(s => Math.min(999, s + 0.01));
-      requestAnimationFrame(loop);
+      animationId = requestAnimationFrame(loop);
     };
 
-    loop();
+    animationId = requestAnimationFrame(loop);
 
-    const flap = () => { birdV = -6; };
+    const flap = () => {
+      if (playing) {
+        birdV = -6;
+      }
+    };
     const onKey = (e: KeyboardEvent) => {
       if (e.code === 'Space') { e.preventDefault(); flap(); }
     };
@@ -77,8 +107,9 @@ export default function FlappyBirdGame() {
 
     return () => {
       window.removeEventListener('keydown', onKey);
+      cancelAnimationFrame(animationId);
     };
-  }, [playing]);
+  }, [playing, score]);
 
   useEffect(() => {
     if (score > best) setBest(Math.floor(score));
