@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "node --experimental-strip-types --experimental-specifier-resolution=node --test app/2048/gameLogic.test.ts"
   },
   "dependencies": {
     "lucide-react": "^0.545.0",

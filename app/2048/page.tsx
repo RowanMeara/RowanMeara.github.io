@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
-
-const SIZE = 4;
+import { SIZE, addRandom, emptyBoard, hasAnyMove, moveBoardDetailed, type Direction } from './gameLogic';
 
 interface Tile {
   id: number;
@@ -16,124 +15,39 @@ interface Tile {
 
 let nextTileId = 0;
 
-function emptyBoard(): number[][] {
-  return Array.from({ length: SIZE }, () => Array.from({ length: SIZE }, () => 0));
+const posKey = (row: number, col: number) => `${row},${col}`;
+
+function tileColors(value: number): { background: string; color: string } {
+  const map: Record<number, { background: string; color: string }> = {
+    2: { background: '#eee4da', color: '#776e65' },
+    4: { background: '#ede0c8', color: '#776e65' },
+    8: { background: '#f2b179', color: '#f9f6f2' },
+    16: { background: '#f59563', color: '#f9f6f2' },
+    32: { background: '#f67c5f', color: '#f9f6f2' },
+    64: { background: '#f65e3b', color: '#f9f6f2' },
+    128: { background: '#edcf72', color: '#f9f6f2' },
+    256: { background: '#edcc61', color: '#f9f6f2' },
+    512: { background: '#edc850', color: '#f9f6f2' },
+    1024: { background: '#edc53f', color: '#f9f6f2' },
+    2048: { background: '#edc22e', color: '#f9f6f2' },
+  };
+
+  if (map[value]) return map[value];
+
+  const level = Math.log2(value);
+  const hue = (36 + level * 23) % 360;
+  return {
+    background: `linear-gradient(135deg, hsl(${hue} 74% 56%), hsl(${(hue + 30) % 360} 72% 42%))`,
+    color: '#ffffff',
+  };
 }
 
-function cloneBoard(b: number[][]): number[][] {
-  return b.map(row => row.slice());
-}
-
-function addRandom(board: number[][]): number[][] {
-  const empties: [number, number][] = [];
-  for (let r = 0; r < SIZE; r++) {
-    for (let c = 0; c < SIZE; c++) {
-      if (board[r][c] === 0) empties.push([r, c]);
-    }
-  }
-  if (empties.length === 0) return board;
-  const [rr, cc] = empties[Math.floor(Math.random() * empties.length)];
-  board[rr][cc] = Math.random() < 0.9 ? 2 : 4;
-  return board;
-}
-
-// Merge a single line to the left, returning the new line and the score gained by merges
-function slideLine(line: number[]): { newLine: number[]; gained: number } {
-  const nonZero = line.filter(v => v !== 0);
-  const merged: number[] = [];
-  let gained = 0;
-  let skip = false;
-  for (let i = 0; i < nonZero.length; i++) {
-    if (skip) { skip = false; continue; }
-    if (i + 1 < nonZero.length && nonZero[i] === nonZero[i + 1]) {
-      const val = nonZero[i] * 2;
-      merged.push(val);
-      gained += val;
-      skip = true;
-    } else {
-      merged.push(nonZero[i]);
-    }
-  }
-  while (merged.length < SIZE) merged.push(0);
-  return { newLine: merged, gained };
-}
-
-function transpose(board: number[][]): number[][] {
-  const res = Array.from({ length: SIZE }, () => Array(SIZE).fill(0));
-  for (let r = 0; r < SIZE; r++) {
-    for (let c = 0; c < SIZE; c++) {
-      res[c][r] = board[r][c];
-    }
-  }
-  return res;
-}
-
-function moveBoard(board: number[][], dir: 'LEFT'|'UP'|'RIGHT'|'DOWN'):
-  { board: number[][]; gained: number; moved: boolean } {
-  let moved = false;
-  let gainedTotal = 0;
-  let b: number[][] = board.map(r => r.slice());
-  switch (dir) {
-    case 'LEFT': {
-      const before = b.map(r => r.slice());
-      const newRows = b.map((row) => {
-        const { newLine, gained } = slideLine(row);
-        gainedTotal += gained;
-        return newLine;
-      });
-      b = newRows;
-      moved = !before.every((row, i) => row.every((v, j) => v === b[i][j]));
-      break;
-    }
-    case 'RIGHT': {
-      const before = b.map(r => r.slice());
-      const newRows = b.map((row) => {
-        const rev = row.slice().reverse();
-        const { newLine, gained } = slideLine(rev);
-        gainedTotal += gained;
-        return newLine.reverse();
-      });
-      b = newRows;
-      moved = !before.every((row, i) => row.every((v, j) => v === b[i][j]));
-      break;
-    }
-    case 'UP': {
-      const before = b.map(r => r.slice());
-      const t = transpose(b);
-      const movedCols = t.map(col => {
-        const { newLine, gained } = slideLine(col);
-        gainedTotal += gained;
-        return newLine;
-      });
-      const after = transpose(movedCols);
-      b = after;
-      moved = !before.every((row, i) => row.every((v, j) => v === b[i][j]));
-      break;
-    }
-case 'DOWN': {
-  // Down move: Down move: process each column from bottom to top with sliding
-  const before = b.map(r => r.slice());
-  let movedLocal = false;
-  let gainLocal = 0;
-  const newBoard = board.map(row => row.slice());
-  for (let c = 0; c < SIZE; c++) {
-    const col: number[] = [];
-    for (let r = SIZE - 1; r >= 0; r--) col.push(newBoard[r][c]);
-    const { newLine, gained } = slideLine(col);
-    gainLocal += gained;
-    for (let i = 0; i < SIZE; i++) {
-      newBoard[SIZE - 1 - i][c] = newLine[i];
-    }
-  }
-  // detect move
-  movedLocal = !before.every((row, r) => row.every((v, c) => newBoard[r][c] === v));
-  b = newBoard;
-  moved = movedLocal;
-  gainedTotal += gainLocal;
-  break;
-}
-  }
-  return { board: b, gained: gainedTotal, moved };
+function tileFontSize(value: number): string {
+  const digits = String(value).length;
+  if (digits <= 2) return 'clamp(20px, 5.2vw, 34px)';
+  if (digits === 3) return 'clamp(18px, 4.5vw, 28px)';
+  if (digits === 4) return 'clamp(15px, 3.8vw, 22px)';
+  return 'clamp(12px, 3.1vw, 18px)';
 }
 
 export default function Game2048() {
@@ -141,9 +55,12 @@ export default function Game2048() {
   const [tiles, setTiles] = useState<Tile[]>([]);
   const [score, setScore] = useState(0);
   const [best, setBest] = useState<number>(0);
-  const [anim, setAnim] = useState<string[][]>(Array.from({ length: SIZE }, () => Array.from({ length: SIZE }, () => '')));
   const [started, setStarted] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  const [winReached, setWinReached] = useState(false);
+  const [continueAfterWin, setContinueAfterWin] = useState(false);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const maxTile = board.flat().reduce((m, v) => Math.max(m, v), 0);
 
   const boardToTiles = useCallback((b: number[][]): Tile[] => {
     const result: Tile[] = [];
@@ -164,96 +81,74 @@ export default function Game2048() {
 
   const newGame = useCallback(() => {
     nextTileId = 0;
-    let b = emptyBoard();
-    b = addRandom(addRandom(b));
-    setBoard(b);
-    setTiles(boardToTiles(b));
+    const seeded = addRandom(addRandom(emptyBoard()));
+    setBoard(seeded);
+    setTiles(boardToTiles(seeded));
     setScore(0);
     setGameOver(false);
+    setWinReached(false);
+    setContinueAfterWin(false);
     setStarted(true);
-    setAnim(Array.from({ length: SIZE }, () => Array.from({ length: SIZE }, () => '')));
   }, [boardToTiles]);
 
   useEffect(() => {
     const saved = typeof window !== 'undefined' ? localStorage.getItem('cpu-2048-best') : null;
-    if (saved) setBest(parseInt(saved));
+    const parsed = saved ? Number.parseInt(saved, 10) : NaN;
+    if (Number.isFinite(parsed) && parsed >= 0) {
+      setBest(parsed);
+    }
   }, []);
 
   useEffect(() => {
-    if (gameOver) {
-      setBest(old => {
-        const next = Math.max(old, score);
-        if (typeof window !== 'undefined') localStorage.setItem('cpu-2048-best', String(next));
-        return next;
-      });
-    }
-  }, [gameOver, score]);
+    setBest((prev) => {
+      const next = Math.max(prev, score);
+      if (next !== prev && typeof window !== 'undefined') {
+        localStorage.setItem('cpu-2048-best', String(next));
+      }
+      return next;
+    });
+  }, [score]);
 
-  const performMove = useCallback((dir: 'LEFT'|'UP'|'RIGHT'|'DOWN') => {
-    setBoard(prevBoard => {
-      const { board: movedBoard, gained, moved } = moveBoard(prevBoard, dir);
+  const performMove = useCallback((dir: Direction) => {
+    setBoard((prevBoard) => {
+      const { board: movedBoard, gained, moved, cells } = moveBoardDetailed(prevBoard, dir);
       if (!moved) return prevBoard;
 
       const finalBoard = addRandom(movedBoard);
 
-      // Update tiles based on the new board state
-      setTiles(prevTiles => {
+      setTiles((prevTiles) => {
+        const idByPos = new Map<string, number>();
+        for (const oldTile of prevTiles) {
+          idByPos.set(posKey(oldTile.row, oldTile.col), oldTile.id);
+        }
+
         const newTiles: Tile[] = [];
-        const usedTiles = new Set<number>();
+
+        for (const cell of cells) {
+          const primarySource = cell.sources[0];
+          const existingId = primarySource
+            ? idByPos.get(posKey(primarySource.row, primarySource.col))
+            : undefined;
+
+          newTiles.push({
+            id: existingId ?? nextTileId++,
+            value: cell.value,
+            row: cell.row,
+            col: cell.col,
+            isMerged: cell.sources.length > 1,
+          });
+        }
 
         for (let r = 0; r < SIZE; r++) {
           for (let c = 0; c < SIZE; c++) {
-            if (finalBoard[r][c] !== 0) {
-              const movedValue = movedBoard[r][c];
-              const finalValue = finalBoard[r][c];
-              const isNewTile = movedValue === 0 && finalValue !== 0;
-
-              if (isNewTile) {
-                newTiles.push({
-                  id: nextTileId++,
-                  value: finalValue,
-                  row: r,
-                  col: c,
-                  isNew: true,
-                });
-              } else {
-                // Find matching tile from previous state
-                let foundTile: Tile | undefined;
-
-                for (const oldTile of prevTiles) {
-                  if (usedTiles.has(oldTile.id)) continue;
-
-                  // Check if this tile could have moved to this position
-                  const couldMove =
-                    (dir === 'LEFT' && oldTile.row === r && oldTile.col >= c) ||
-                    (dir === 'RIGHT' && oldTile.row === r && oldTile.col <= c) ||
-                    (dir === 'UP' && oldTile.col === c && oldTile.row >= r) ||
-                    (dir === 'DOWN' && oldTile.col === c && oldTile.row <= r);
-
-                  if (couldMove && (oldTile.value === finalValue || oldTile.value === finalValue / 2)) {
-                    foundTile = oldTile;
-                    usedTiles.add(oldTile.id);
-                    break;
-                  }
-                }
-
-                if (foundTile) {
-                  newTiles.push({
-                    id: foundTile.id,
-                    value: finalValue,
-                    row: r,
-                    col: c,
-                    isMerged: finalValue !== foundTile.value,
-                  });
-                } else {
-                  newTiles.push({
-                    id: nextTileId++,
-                    value: finalValue,
-                    row: r,
-                    col: c,
-                  });
-                }
-              }
+            if (movedBoard[r][c] === 0 && finalBoard[r][c] !== 0) {
+              newTiles.push({
+                id: nextTileId++,
+                value: finalBoard[r][c],
+                row: r,
+                col: c,
+                isNew: true,
+              });
             }
           }
         }
@@ -261,125 +156,236 @@ export default function Game2048() {
         return newTiles;
       });
 
-      // Update score
-      setScore(s => s + gained);
+      setScore((s) => s + gained);
 
-      // Handle game over
-      const anyMove = (mb: number[][]) => {
-        for (let i=0;i<SIZE;i++) for (let j=0;j<SIZE;j++) if (mb[i][j] === 0) return true;
-        for (let i=0;i<SIZE;i++) for (let j=0;j<SIZE-1;j++) if (mb[i][j] === mb[i][j+1]) return true;
-        for (let i=0;i<SIZE-1;i++) for (let j=0;j<SIZE;j++) if (mb[i][j] === mb[i+1][j]) return true;
-        return false;
-      };
-      if (!anyMove(finalBoard)) {
+      if (!winReached && finalBoard.some((row) => row.some((value) => value >= 2048))) {
+        setWinReached(true);
+      }
+
+      if (!hasAnyMove(finalBoard)) {
         setGameOver(true);
       }
 
-      // Clear animation flags after a delay
       setTimeout(() => {
-        setTiles(tiles => tiles.map(t => ({ ...t, isNew: false, isMerged: false })));
-      }, 200);
+        setTiles((existing) => existing.map((t) => ({ ...t, isNew: false, isMerged: false })));
+      }, 180);
 
       return finalBoard;
     });
+  }, [winReached]);
+
+  const overlayWinOpen = winReached && !continueAfterWin && !gameOver;
+
+  const handleMove = useCallback((dir: Direction) => {
+    if (!started || gameOver || overlayWinOpen) return;
+    performMove(dir);
+  }, [started, gameOver, overlayWinOpen, performMove]);
+
+  const onTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    const touch = e.changedTouches[0];
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
   }, []);
 
-  const handleMove = useCallback((dir: 'LEFT'|'UP'|'RIGHT'|'DOWN') => {
-    if (!started || gameOver) return;
-    performMove(dir);
-  }, [started, gameOver, performMove]);
+  const onTouchEnd = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    const start = touchStartRef.current;
+    touchStartRef.current = null;
+    if (!start || !started || gameOver || overlayWinOpen) return;
+
+    const touch = e.changedTouches[0];
+    const dx = touch.clientX - start.x;
+    const dy = touch.clientY - start.y;
+    const absX = Math.abs(dx);
+    const absY = Math.abs(dy);
+    const threshold = 28;
+
+    if (Math.max(absX, absY) < threshold) return;
+
+    if (absX > absY * 1.2) {
+      handleMove(dx > 0 ? 'RIGHT' : 'LEFT');
+      return;
+    }
+
+    if (absY > absX * 1.2) {
+      handleMove(dy > 0 ? 'DOWN' : 'UP');
+    }
+  }, [gameOver, handleMove, overlayWinOpen, started]);
+
+  const onTouchCancel = useCallback(() => {
+    touchStartRef.current = null;
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (!started || gameOver) return;
-      if ([ 'ArrowLeft','ArrowUp','ArrowRight','ArrowDown','w','a','s','d' ].includes(e.key)) {
+      if (!started || gameOver || overlayWinOpen) return;
+      if (['ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown', 'w', 'a', 's', 'd', 'W', 'A', 'S', 'D'].includes(e.key)) {
         e.preventDefault();
-        let dir: 'LEFT'|'UP'|'RIGHT'|'DOWN' = 'LEFT';
+        let dir: Direction = 'LEFT';
         switch (e.key) {
-          case 'ArrowLeft': case 'a': case 'A': dir = 'LEFT'; break;
-          case 'ArrowUp': case 'w': case 'W': dir = 'UP'; break;
-          case 'ArrowRight': case 'd': case 'D': dir = 'RIGHT'; break;
-          case 'ArrowDown': case 's': case 'S': dir = 'DOWN'; break;
+          case 'ArrowLeft':
+          case 'a':
+          case 'A':
+            dir = 'LEFT';
+            break;
+          case 'ArrowUp':
+          case 'w':
+          case 'W':
+            dir = 'UP';
+            break;
+          case 'ArrowRight':
+          case 'd':
+          case 'D':
+            dir = 'RIGHT';
+            break;
+          case 'ArrowDown':
+          case 's':
+          case 'S':
+            dir = 'DOWN';
+            break;
+          default:
+            break;
         }
         handleMove(dir);
       }
     };
+
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [started, gameOver, handleMove]);
+  }, [gameOver, handleMove, overlayWinOpen, started]);
 
-  // Initialize
-  useEffect(() => { if (!started) newGame(); }, [started, newGame]);
+  useEffect(() => {
+    if (!started) newGame();
+  }, [started, newGame]);
 
-  const colorFor = (v: number): string => {
-    const map: Record<number, string> = {
-      2: '#eee4da', 4: '#ede0c8', 8: '#f2b179', 16: '#f59563', 32: '#f67c5f', 64: '#f65e3b', 128: '#edcf72', 256: '#edcc61', 512: '#edc850', 1024: '#edc53f', 2048: '#edc22e'
-    };
-    return map[v] ?? '#3c3a32';
-  };
+  const statusAnnouncement = gameOver
+    ? `Game over. Score ${score}. Best ${best}.`
+    : overlayWinOpen
+      ? `You reached 2048 with score ${score}. Choose Continue or New Game.`
+      : `Score ${score}. Best ${best}.`;
 
-  // Render grid
   return (
-    <div className="min-h-screen bg-stone-50 dark:bg-stone-950 flex flex-col items-center justify-center p-4">
+    <main className="min-h-screen bg-stone-50 dark:bg-stone-950 flex flex-col items-center justify-center p-4">
       <style jsx>{`
-        .game-container {
+        .game-shell {
+          --gap: clamp(6px, 1.6vw, 10px);
+          --cell-size: clamp(58px, 18vw, 86px);
           position: relative;
-          width: ${SIZE * 72 + (SIZE - 1) * 8}px;
-          height: ${SIZE * 72 + (SIZE - 1) * 8}px;
+          width: calc(${SIZE} * var(--cell-size) + (${SIZE} - 1) * var(--gap));
+          height: calc(${SIZE} * var(--cell-size) + (${SIZE} - 1) * var(--gap));
+          touch-action: none;
+          user-select: none;
         }
         .grid-cell {
           position: absolute;
-          width: 72px;
-          height: 72px;
-          border-radius: 6px;
+          width: var(--cell-size);
+          height: var(--cell-size);
+          border-radius: 10px;
           background: rgba(238, 228, 218, 0.35);
         }
         .tile {
           position: absolute;
-          width: 72px;
-          height: 72px;
-          border-radius: 6px;
+          width: var(--cell-size);
+          height: var(--cell-size);
+          border-radius: 10px;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-weight: 700;
-          transition: all 0.15s ease-in-out;
+          font-weight: 800;
+          transition: top 0.12s ease-in-out, left 0.12s ease-in-out;
         }
         .tile--new {
-          animation: spawn 0.2s ease;
+          animation: spawn 0.18s ease;
         }
         .tile--merged {
-          animation: merge 0.2s ease;
+          animation: merge 0.18s ease;
+        }
+        .overlay {
+          position: absolute;
+          inset: 0;
+          border-radius: 12px;
+          background: rgba(20, 20, 20, 0.45);
+          backdrop-filter: blur(2px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          padding: 16px;
+          z-index: 15;
+        }
+        .overlay-card {
+          background: rgba(255, 255, 255, 0.95);
+          color: #1f2937;
+          border-radius: 12px;
+          padding: 18px;
+          width: min(90%, 320px);
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
         @keyframes spawn {
-          0% { transform: scale(0); opacity: 0; }
+          0% { transform: scale(0.4); opacity: 0; }
           100% { transform: scale(1); opacity: 1; }
         }
         @keyframes merge {
           0% { transform: scale(1); }
-          50% { transform: scale(1.15); }
+          50% { transform: scale(1.14); }
           100% { transform: scale(1); }
         }
+        @media (prefers-reduced-motion: reduce) {
+          .tile {
+            transition: none;
+          }
+          .tile--new,
+          .tile--merged {
+            animation: none;
+          }
+        }
       `}</style>
-      <div className="mb-8 text-center">
-        <Link href="/projects" className="text-sm text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 transition-colors mb-4 inline-block">&larr; back</Link>
+
+      <div className="mb-6 text-center">
+        <Link
+          href="/projects"
+          className="text-sm text-stone-500 hover:text-stone-700 dark:hover:text-stone-300 transition-colors mb-4 inline-block"
+        >
+          &larr; back
+        </Link>
         <h1 className="text-3xl font-light text-stone-800 dark:text-stone-200 tracking-wide">2048</h1>
+        <p className="mt-2 text-xs text-stone-500">Use arrow keys/WASD or swipe on the board.</p>
       </div>
-      <div className="game-container">
-        {/* Background grid */}
+
+      <div className="mb-4 flex items-center gap-3" aria-label="Scoreboard">
+        <div className="rounded-lg border border-stone-300/70 dark:border-stone-700 px-3 py-2 text-sm">
+          Score: <span className="font-semibold">{score}</span>
+        </div>
+        <div className="rounded-lg border border-stone-300/70 dark:border-stone-700 px-3 py-2 text-sm">
+          Best: <span className="font-semibold">{best}</span>
+        </div>
+        <div className="rounded-lg border border-stone-300/70 dark:border-stone-700 px-3 py-2 text-sm">
+          Max Tile: <span className="font-semibold">{maxTile || 0}</span>
+        </div>
+      </div>
+
+      <div
+        className="game-shell"
+        role="grid"
+        aria-label="2048 board"
+        aria-describedby="game-help"
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+        onTouchCancel={onTouchCancel}
+      >
         {Array.from({ length: SIZE * SIZE }).map((_, i) => {
           const r = Math.floor(i / SIZE);
           const c = i % SIZE;
-          const top = r * (72 + 8);
-          const left = c * (72 + 8);
-          return <div key={`cell-${i}`} className="grid-cell" style={{ top, left }} />;
+          const top = `calc(${r} * (var(--cell-size) + var(--gap)))`;
+          const left = `calc(${c} * (var(--cell-size) + var(--gap)))`;
+          return <div key={`cell-${i}`} className="grid-cell" style={{ top, left }} aria-hidden="true" />;
         })}
-        {/* Tiles */}
-        {tiles.map(tile => {
-          const top = tile.row * (72 + 8);
-          const left = tile.col * (72 + 8);
-          const bg = colorFor(tile.value);
+
+        {tiles.map((tile) => {
+          const top = `calc(${tile.row} * (var(--cell-size) + var(--gap)))`;
+          const left = `calc(${tile.col} * (var(--cell-size) + var(--gap)))`;
+          const palette = tileColors(tile.value);
           const cls = `tile ${tile.isNew ? 'tile--new' : ''} ${tile.isMerged ? 'tile--merged' : ''}`;
+          const powerfulTile = tile.value > 2048;
+
           return (
             <div
               key={tile.id}
@@ -387,20 +393,76 @@ export default function Game2048() {
               style={{
                 top,
                 left,
-                background: bg,
-                color: tile.value <= 4 ? '#776e65' : '#f9f6f2',
-                fontSize: tile.value > 999 ? 14 : 20,
+                background: palette.background,
+                color: palette.color,
+                fontSize: tileFontSize(tile.value),
+                textShadow: powerfulTile ? '0 1px 3px rgba(0,0,0,0.35)' : 'none',
+                letterSpacing: powerfulTile ? '0.02em' : '0',
               }}
+              aria-hidden="true"
             >
               {tile.value}
             </div>
           );
         })}
+
+        {gameOver && (
+          <div className="overlay" role="dialog" aria-modal="true" aria-labelledby="game-over-title">
+            <div className="overlay-card">
+              <h2 id="game-over-title" className="text-xl font-semibold">Game Over</h2>
+              <p className="mt-2 text-sm text-stone-700">Final score: {score}</p>
+              <button
+                onClick={newGame}
+                className="mt-4 w-full rounded-md border border-stone-800 bg-stone-800 text-white px-4 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-stone-500"
+              >
+                New Game
+              </button>
+            </div>
+          </div>
+        )}
+
+        {overlayWinOpen && (
+          <div className="overlay" role="dialog" aria-modal="true" aria-labelledby="win-title">
+            <div className="overlay-card">
+              <h2 id="win-title" className="text-xl font-semibold">You made 2048</h2>
+              <p className="mt-2 text-sm text-stone-700">Keep going for a higher score or start over.</p>
+              <div className="mt-4 flex gap-2">
+                <button
+                  onClick={() => setContinueAfterWin(true)}
+                  className="flex-1 rounded-md border border-stone-700 px-4 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-stone-500"
+                >
+                  Continue
+                </button>
+                <button
+                  onClick={newGame}
+                  className="flex-1 rounded-md border border-stone-800 bg-stone-800 text-white px-4 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-stone-500"
+                >
+                  New Game
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-      <div className="flex gap-4 mt-6">
-        <button onClick={newGame} className="px-4 py-2 border rounded">New Game</button>
+
+      <div className="flex gap-4 mt-5">
+        <button
+          onClick={newGame}
+          className="px-4 py-2 border rounded-md hover:bg-stone-100 dark:hover:bg-stone-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-stone-500"
+        >
+          New Game
+        </button>
       </div>
-      <div className="mt-4 text-xs text-stone-500">Score: {score}  Best: {best}</div>
-    </div>
+
+      <p id="game-help" className="mt-3 text-xs text-stone-500">
+        Swipe on touch devices. Keyboard: arrows or WASD.
+      </p>
+
+      <div className="sr-only" aria-live="polite">{statusAnnouncement}</div>
+
+      <div className="sr-only" aria-live="polite" role="status">
+        {winReached ? '2048 reached.' : 'Playing.'}
+      </div>
+    </main>
   );
 }
