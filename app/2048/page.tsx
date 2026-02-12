@@ -3,19 +3,9 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { SIZE, addRandom, emptyBoard, hasAnyMove, moveBoardDetailed, type Direction } from './gameLogic';
-
-interface Tile {
-  id: number;
-  value: number;
-  row: number;
-  col: number;
-  isNew?: boolean;
-  isMerged?: boolean;
-}
+import { addSpawnTile, buildSettledTiles, buildSlidePhaseTiles, type Tile } from './tileAnimator';
 
 let nextTileId = 0;
-
-const posKey = (row: number, col: number) => `${row},${col}`;
 
 function tileColors(value: number): { background: string; color: string } {
   const map: Record<number, { background: string; color: string }> = {
@@ -51,6 +41,9 @@ function tileFontSize(value: number): string {
 }
 
 export default function Game2048() {
+  const MOVE_MS = 170;
+  const [cellSize, setCellSize] = useState(72);
+  const [gapSize, setGapSize] = useState(8);
   const [board, setBoard] = useState<number[][]>(emptyBoard);
   const [tiles, setTiles] = useState<Tile[]>([]);
   const [score, setScore] = useState(0);
@@ -59,8 +52,12 @@ export default function Game2048() {
   const [gameOver, setGameOver] = useState(false);
   const [winReached, setWinReached] = useState(false);
   const [continueAfterWin, setContinueAfterWin] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const animationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const tilesRef = useRef<Tile[]>([]);
   const maxTile = board.flat().reduce((m, v) => Math.max(m, v), 0);
+  const boardPx = SIZE * cellSize + (SIZE - 1) * gapSize;
 
   const boardToTiles = useCallback((b: number[][]): Tile[] => {
     const result: Tile[] = [];
@@ -80,6 +77,10 @@ export default function Game2048() {
   }, []);
 
   const newGame = useCallback(() => {
+    if (animationTimerRef.current) {
+      clearTimeout(animationTimerRef.current);
+      animationTimerRef.current = null;
+    }
     nextTileId = 0;
     const seeded = addRandom(addRandom(emptyBoard()));
     setBoard(seeded);
@@ -88,8 +89,13 @@ export default function Game2048() {
     setGameOver(false);
     setWinReached(false);
     setContinueAfterWin(false);
+    setIsAnimating(false);
     setStarted(true);
   }, [boardToTiles]);
+
+  useEffect(() => {
+    tilesRef.current = tiles;
+  }, [tiles]);
 
   useEffect(() => {
     const saved = typeof window !== 'undefined' ? localStorage.getItem('cpu-2048-best') : null;
@@ -114,72 +120,45 @@ export default function Game2048() {
       const { board: movedBoard, gained, moved, cells } = moveBoardDetailed(prevBoard, dir);
       if (!moved) return prevBoard;
 
-      const finalBoard = addRandom(movedBoard);
+      const prevTiles = tilesRef.current;
+      const settledPhaseTiles = buildSettledTiles(prevTiles, cells, () => nextTileId++);
+      setTiles(buildSlidePhaseTiles(prevTiles, cells));
 
-      setTiles((prevTiles) => {
-        const idByPos = new Map<string, number>();
-        for (const oldTile of prevTiles) {
-          idByPos.set(posKey(oldTile.row, oldTile.col), oldTile.id);
-        }
-
-        const newTiles: Tile[] = [];
-
-        for (const cell of cells) {
-          const primarySource = cell.sources[0];
-          const existingId = primarySource
-            ? idByPos.get(posKey(primarySource.row, primarySource.col))
-            : undefined;
-
-          newTiles.push({
-            id: existingId ?? nextTileId++,
-            value: cell.value,
-            row: cell.row,
-            col: cell.col,
-            isMerged: cell.sources.length > 1,
-          });
-        }
-
-        for (let r = 0; r < SIZE; r++) {
-          for (let c = 0; c < SIZE; c++) {
-            if (movedBoard[r][c] === 0 && finalBoard[r][c] !== 0) {
-              newTiles.push({
-                id: nextTileId++,
-                value: finalBoard[r][c],
-                row: r,
-                col: c,
-                isNew: true,
-              });
-            }
-          }
-        }
-
-        return newTiles;
-      });
-
+      setIsAnimating(true);
       setScore((s) => s + gained);
 
-      if (!winReached && finalBoard.some((row) => row.some((value) => value >= 2048))) {
+      if (!winReached && movedBoard.some((row) => row.some((value) => value >= 2048))) {
         setWinReached(true);
       }
 
-      if (!hasAnyMove(finalBoard)) {
-        setGameOver(true);
+      if (animationTimerRef.current) {
+        clearTimeout(animationTimerRef.current);
       }
+      animationTimerRef.current = setTimeout(() => {
+        const finalBoard = addRandom(movedBoard);
+        setBoard(finalBoard);
 
-      setTimeout(() => {
-        setTiles((existing) => existing.map((t) => ({ ...t, isNew: false, isMerged: false })));
-      }, 180);
+        setTiles(() => addSpawnTile(settledPhaseTiles, movedBoard, finalBoard, () => nextTileId++));
 
-      return finalBoard;
+        if (!hasAnyMove(finalBoard)) {
+          setGameOver(true);
+        }
+
+        setTimeout(() => {
+          setTiles((existing) => existing.map((t) => ({ ...t, isNew: false, isMerged: false })));
+        }, 130);
+        setIsAnimating(false);
+      }, MOVE_MS);
+      return movedBoard;
     });
-  }, [winReached]);
+  }, [MOVE_MS, winReached]);
 
   const overlayWinOpen = winReached && !continueAfterWin && !gameOver;
 
   const handleMove = useCallback((dir: Direction) => {
-    if (!started || gameOver || overlayWinOpen) return;
+    if (!started || gameOver || overlayWinOpen || isAnimating) return;
     performMove(dir);
-  }, [started, gameOver, overlayWinOpen, performMove]);
+  }, [started, gameOver, overlayWinOpen, isAnimating, performMove]);
 
   const onTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
     const touch = e.changedTouches[0];
@@ -256,6 +235,27 @@ export default function Game2048() {
     if (!started) newGame();
   }, [started, newGame]);
 
+  useEffect(() => {
+    const computeMetrics = () => {
+      if (typeof window === 'undefined') return;
+      const maxBoard = Math.min(420, Math.max(280, window.innerWidth - 36));
+      const nextGap = Math.max(6, Math.min(10, Math.round(maxBoard * 0.02)));
+      const nextCell = Math.max(58, Math.min(86, Math.floor((maxBoard - (SIZE - 1) * nextGap) / SIZE)));
+      setGapSize(nextGap);
+      setCellSize(nextCell);
+    };
+
+    computeMetrics();
+    window.addEventListener('resize', computeMetrics);
+    return () => window.removeEventListener('resize', computeMetrics);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (animationTimerRef.current) clearTimeout(animationTimerRef.current);
+    };
+  }, []);
+
   const statusAnnouncement = gameOver
     ? `Game over. Score ${score}. Best ${best}.`
     : overlayWinOpen
@@ -266,36 +266,36 @@ export default function Game2048() {
     <main className="min-h-screen bg-stone-50 dark:bg-stone-950 flex flex-col items-center justify-center p-4">
       <style jsx>{`
         .game-shell {
-          --gap: clamp(6px, 1.6vw, 10px);
-          --cell-size: clamp(58px, 18vw, 86px);
           position: relative;
-          width: calc(${SIZE} * var(--cell-size) + (${SIZE} - 1) * var(--gap));
-          height: calc(${SIZE} * var(--cell-size) + (${SIZE} - 1) * var(--gap));
           touch-action: none;
           user-select: none;
         }
         .grid-cell {
           position: absolute;
-          width: var(--cell-size);
-          height: var(--cell-size);
           border-radius: 10px;
           background: rgba(238, 228, 218, 0.35);
         }
         .tile {
           position: absolute;
-          width: var(--cell-size);
-          height: var(--cell-size);
+          top: 0;
+          left: 0;
+          z-index: 2;
+          pointer-events: none;
+          transition: transform 0.17s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+        .tile-inner {
+          width: 100%;
+          height: 100%;
           border-radius: 10px;
           display: flex;
           align-items: center;
           justify-content: center;
           font-weight: 800;
-          transition: top 0.12s ease-in-out, left 0.12s ease-in-out;
         }
-        .tile--new {
+        .tile-inner--new {
           animation: spawn 0.18s ease;
         }
-        .tile--merged {
+        .tile-inner--merged {
           animation: merge 0.18s ease;
         }
         .overlay {
@@ -330,10 +330,10 @@ export default function Game2048() {
         }
         @media (prefers-reduced-motion: reduce) {
           .tile {
-            transition: none;
+            transition: transform 0.09s linear;
           }
-          .tile--new,
-          .tile--merged {
+          .tile-inner--new,
+          .tile-inner--merged {
             animation: none;
           }
         }
@@ -364,6 +364,7 @@ export default function Game2048() {
 
       <div
         className="game-shell"
+        style={{ width: boardPx, height: boardPx }}
         role="grid"
         aria-label="2048 board"
         aria-describedby="game-help"
@@ -374,34 +375,41 @@ export default function Game2048() {
         {Array.from({ length: SIZE * SIZE }).map((_, i) => {
           const r = Math.floor(i / SIZE);
           const c = i % SIZE;
-          const top = `calc(${r} * (var(--cell-size) + var(--gap)))`;
-          const left = `calc(${c} * (var(--cell-size) + var(--gap)))`;
-          return <div key={`cell-${i}`} className="grid-cell" style={{ top, left }} aria-hidden="true" />;
+          const top = r * (cellSize + gapSize);
+          const left = c * (cellSize + gapSize);
+          return <div key={`cell-${i}`} className="grid-cell" style={{ top, left, width: cellSize, height: cellSize }} aria-hidden="true" />;
         })}
 
         {tiles.map((tile) => {
-          const top = `calc(${tile.row} * (var(--cell-size) + var(--gap)))`;
-          const left = `calc(${tile.col} * (var(--cell-size) + var(--gap)))`;
+          const top = tile.row * (cellSize + gapSize);
+          const left = tile.col * (cellSize + gapSize);
           const palette = tileColors(tile.value);
-          const cls = `tile ${tile.isNew ? 'tile--new' : ''} ${tile.isMerged ? 'tile--merged' : ''}`;
+          const innerCls = `tile-inner ${tile.isNew ? 'tile-inner--new' : ''} ${tile.isMerged ? 'tile-inner--merged' : ''}`;
           const powerfulTile = tile.value > 2048;
 
           return (
             <div
               key={tile.id}
-              className={cls}
+              className="tile"
               style={{
-                top,
-                left,
-                background: palette.background,
-                color: palette.color,
-                fontSize: tileFontSize(tile.value),
-                textShadow: powerfulTile ? '0 1px 3px rgba(0,0,0,0.35)' : 'none',
-                letterSpacing: powerfulTile ? '0.02em' : '0',
+                transform: `translate3d(${left}px, ${top}px, 0)`,
+                width: cellSize,
+                height: cellSize,
               }}
               aria-hidden="true"
             >
-              {tile.value}
+              <div
+                className={innerCls}
+                style={{
+                  background: palette.background,
+                  color: palette.color,
+                  fontSize: tileFontSize(tile.value),
+                  textShadow: powerfulTile ? '0 1px 3px rgba(0,0,0,0.35)' : 'none',
+                  letterSpacing: powerfulTile ? '0.02em' : '0',
+                }}
+              >
+                {tile.value}
+              </div>
             </div>
           );
         })}
