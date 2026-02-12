@@ -10,6 +10,7 @@ export interface Tile {
 }
 
 const keyOf = (row: number, col: number) => `${row},${col}`;
+const sortById = (a: Tile, b: Tile) => a.id - b.id;
 
 function tileMaps(prevTiles: Tile[]): {
   byPos: Map<string, Tile>;
@@ -43,7 +44,7 @@ export function buildSlidePhaseTiles(prevTiles: Tile[], cells: DetailedMoveCell[
     }
   }
 
-  return moving;
+  return moving.sort(sortById);
 }
 
 export function buildSettledTiles(
@@ -67,7 +68,7 @@ export function buildSettledTiles(
     });
   }
 
-  return settled;
+  return settled.sort(sortById);
 }
 
 export function addSpawnTile(
@@ -92,5 +93,5 @@ export function addSpawnTile(
     }
   }
 
-  return next;
+  return next.sort(sortById);
 }

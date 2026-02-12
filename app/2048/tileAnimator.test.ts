@@ -97,3 +97,23 @@ test('spawn phase adds exactly one new tile flagged isNew', () => {
     isNew: true,
   });
 });
+
+test('slide phase keeps both tile identities for two-tile row movement', () => {
+  const board: Board = [
+    [2, 4, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+  ];
+
+  const prevTiles = tilesFromBoard(board);
+  const result = moveBoardDetailed(board, 'RIGHT');
+  const slide = buildSlidePhaseTiles(prevTiles, result.cells);
+
+  assert.equal(slide.length, 2);
+  assert.deepEqual(slide.map((t) => t.id), [1, 2]);
+  assert.deepEqual(
+    slide.map((t) => ({ row: t.row, col: t.col })),
+    [{ row: 0, col: 2 }, { row: 0, col: 3 }]
+  );
+});

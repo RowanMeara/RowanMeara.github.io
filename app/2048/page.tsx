@@ -55,7 +55,9 @@ export default function Game2048() {
   const [isAnimating, setIsAnimating] = useState(false);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const animationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const tilesRef = useRef<Tile[]>([]);
+  const clearFlagsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const boardRef = useRef<number[][]>(board);
+  const tilesRef = useRef<Tile[]>(tiles);
   const maxTile = board.flat().reduce((m, v) => Math.max(m, v), 0);
   const boardPx = SIZE * cellSize + (SIZE - 1) * gapSize;
 
@@ -81,10 +83,17 @@ export default function Game2048() {
       clearTimeout(animationTimerRef.current);
       animationTimerRef.current = null;
     }
+    if (clearFlagsTimerRef.current) {
+      clearTimeout(clearFlagsTimerRef.current);
+      clearFlagsTimerRef.current = null;
+    }
     nextTileId = 0;
     const seeded = addRandom(addRandom(emptyBoard()));
+    boardRef.current = seeded;
     setBoard(seeded);
-    setTiles(boardToTiles(seeded));
+    const seededTiles = boardToTiles(seeded);
+    tilesRef.current = seededTiles;
+    setTiles(seededTiles);
     setScore(0);
     setGameOver(false);
     setWinReached(false);
@@ -92,6 +101,10 @@ export default function Game2048() {
     setIsAnimating(false);
     setStarted(true);
   }, [boardToTiles]);
+
+  useEffect(() => {
+    boardRef.current = board;
+  }, [board]);
 
   useEffect(() => {
     tilesRef.current = tiles;
@@ -116,41 +129,55 @@ export default function Game2048() {
   }, [score]);
 
   const performMove = useCallback((dir: Direction) => {
-    setBoard((prevBoard) => {
-      const { board: movedBoard, gained, moved, cells } = moveBoardDetailed(prevBoard, dir);
-      if (!moved) return prevBoard;
+    const prevBoard = boardRef.current;
+    const prevTiles = tilesRef.current;
+    const { board: movedBoard, gained, moved, cells } = moveBoardDetailed(prevBoard, dir);
+    if (!moved) return;
 
-      const prevTiles = tilesRef.current;
-      const settledPhaseTiles = buildSettledTiles(prevTiles, cells, () => nextTileId++);
-      setTiles(buildSlidePhaseTiles(prevTiles, cells));
+    const settledPhaseTiles = buildSettledTiles(prevTiles, cells, () => nextTileId++);
+    const slidePhaseTiles = buildSlidePhaseTiles(prevTiles, cells);
 
-      setIsAnimating(true);
-      setScore((s) => s + gained);
+    boardRef.current = movedBoard;
+    tilesRef.current = slidePhaseTiles;
+    setBoard(movedBoard);
+    setTiles(slidePhaseTiles);
+    setIsAnimating(true);
+    setScore((s) => s + gained);
 
-      if (!winReached && movedBoard.some((row) => row.some((value) => value >= 2048))) {
-        setWinReached(true);
+    if (!winReached && movedBoard.some((row) => row.some((value) => value >= 2048))) {
+      setWinReached(true);
+    }
+
+    if (animationTimerRef.current) {
+      clearTimeout(animationTimerRef.current);
+    }
+    if (clearFlagsTimerRef.current) {
+      clearTimeout(clearFlagsTimerRef.current);
+    }
+
+    animationTimerRef.current = setTimeout(() => {
+      const finalBoard = addRandom(movedBoard);
+      const withSpawn = addSpawnTile(settledPhaseTiles, movedBoard, finalBoard, () => nextTileId++);
+
+      boardRef.current = finalBoard;
+      tilesRef.current = withSpawn;
+      setBoard(finalBoard);
+      setTiles(withSpawn);
+
+      if (!hasAnyMove(finalBoard)) {
+        setGameOver(true);
       }
 
-      if (animationTimerRef.current) {
-        clearTimeout(animationTimerRef.current);
-      }
-      animationTimerRef.current = setTimeout(() => {
-        const finalBoard = addRandom(movedBoard);
-        setBoard(finalBoard);
+      clearFlagsTimerRef.current = setTimeout(() => {
+        setTiles((existing) => {
+          const cleaned = existing.map((t) => ({ ...t, isNew: false, isMerged: false }));
+          tilesRef.current = cleaned;
+          return cleaned;
+        });
+      }, 130);
 
-        setTiles(() => addSpawnTile(settledPhaseTiles, movedBoard, finalBoard, () => nextTileId++));
-
-        if (!hasAnyMove(finalBoard)) {
-          setGameOver(true);
-        }
-
-        setTimeout(() => {
-          setTiles((existing) => existing.map((t) => ({ ...t, isNew: false, isMerged: false })));
-        }, 130);
-        setIsAnimating(false);
-      }, MOVE_MS);
-      return movedBoard;
-    });
+      setIsAnimating(false);
+    }, MOVE_MS);
   }, [MOVE_MS, winReached]);
 
   const overlayWinOpen = winReached && !continueAfterWin && !gameOver;
@@ -253,6 +280,7 @@ export default function Game2048() {
   useEffect(() => {
     return () => {
       if (animationTimerRef.current) clearTimeout(animationTimerRef.current);
+      if (clearFlagsTimerRef.current) clearTimeout(clearFlagsTimerRef.current);
     };
   }, []);
 
