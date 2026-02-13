@@ -1,4 +1,5 @@
 import ZenScene from './components/common/ZenScene';
+import Link from 'next/link';
 
 export default function Home() {
   return (
@@ -7,7 +8,7 @@ export default function Home() {
       <ZenScene />
 
       {/* About Section */}
-      <section className="relative py-32 px-6 bg-stone-50 dark:bg-stone-950">
+      <section id="about" className="relative py-32 px-6 bg-stone-50 dark:bg-stone-950">
         <div className="max-w-2xl mx-auto">
           <div className="w-12 h-px bg-stone-300 dark:bg-stone-700 mb-12" />
 
@@ -28,6 +29,12 @@ export default function Home() {
 
           <div className="mt-16 pt-16 border-t border-stone-200 dark:border-stone-800">
             <div className="flex flex-wrap gap-8 text-sm text-stone-500 dark:text-stone-500">
+              <Link
+                href="/projects"
+                className="hover:text-stone-800 dark:hover:text-stone-300 transition-colors duration-300"
+              >
+                Projects
+              </Link>
               <a
                 href="https://www.linkedin.com/in/rowanmeara/"
                 target="_blank"
