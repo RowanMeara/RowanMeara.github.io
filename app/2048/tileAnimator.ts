@@ -77,7 +77,7 @@ export function addSpawnTile(
   finalBoard: number[][],
   createId: () => number
 ): Tile[] {
-  const next = settled.map((t) => ({ ...t, isMerged: false, isNew: false }));
+  const next: Tile[] = settled.map((t) => ({ ...t, isMerged: false, isNew: false }));
 
   for (let r = 0; r < movedBoard.length; r++) {
     for (let c = 0; c < movedBoard[r].length; c++) {
