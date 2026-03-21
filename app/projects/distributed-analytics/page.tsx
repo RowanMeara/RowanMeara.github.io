@@ -24,16 +24,16 @@ export default function DistributedAnalyticsProject() {
           </h1>
           <div className="flex flex-wrap gap-2 mb-6">
             <span className="tag-lg">Python</span>
-            <span className="tag-lg">TensorFlow</span>
             <span className="tag-lg">Apache Spark</span>
             <span className="tag-lg">AWS</span>
+            <span className="tag-lg">Data Pipelines</span>
           </div>
         </div>
 
         {/* Project Content - Placeholder */}
         <div className="prose dark:prose-invert max-w-none">
           <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
-            A scalable platform for processing and analyzing large datasets using distributed computing and machine learning algorithms.
+            A scalable platform for processing and analyzing large datasets using distributed computing and production-ready data pipelines.
           </p>
           
           <p className="text-gray-600 dark:text-gray-400 mb-6">

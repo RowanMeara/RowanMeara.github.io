@@ -2,10 +2,10 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-stone-50 dark:bg-stone-950 border-t border-stone-200 dark:border-stone-800">
-      <div className="max-w-2xl mx-auto py-12 px-6">
+    <footer className="border-t border-[#ddd1be] bg-[#f5f0e7]">
+      <div className="mx-auto max-w-6xl px-6 py-12">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-6">
-          <p className="text-sm text-stone-400 dark:text-stone-600">
+          <p className="text-sm uppercase tracking-[0.28em] text-[#a49684]">
             {currentYear}
           </p>
 
@@ -14,7 +14,7 @@ export default function Footer() {
               href="https://github.com/RowanMeara"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-stone-400 hover:text-stone-600 dark:text-stone-600 dark:hover:text-stone-400 transition-colors duration-300"
+              className="text-[#a49684] transition-colors duration-300 hover:text-[#5f5447]"
               aria-label="GitHub"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -29,7 +29,7 @@ export default function Footer() {
               href="https://linkedin.com/in/rowanmeara"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-stone-400 hover:text-stone-600 dark:text-stone-600 dark:hover:text-stone-400 transition-colors duration-300"
+              className="text-[#a49684] transition-colors duration-300 hover:text-[#5f5447]"
               aria-label="LinkedIn"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
