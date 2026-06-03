@@ -8,6 +8,46 @@ const clamp = (value: number, min: number, max: number) =>
 
 const statPills = ['Distributed systems', 'Backend services', 'Web products'];
 
+function ShojiDoor({ side, openAmount, mounted }: {
+  side: 'left' | 'right';
+  openAmount: number;
+  mounted: boolean;
+}) {
+  const isLeft = side === 'left';
+
+  return (
+    <div
+      className={`absolute inset-y-0 z-20 w-1/2 ${isLeft ? 'left-0' : 'right-0'}`}
+      style={{
+        transform: `translateX(${isLeft ? -openAmount * 100 : openAmount * 100}%)`,
+        transition: mounted ? 'transform 120ms linear' : 'none',
+      }}
+    >
+      <div className={`shoji-door shoji-door--${side}`}>
+        <div className="shoji-door__paper" />
+        <div className="shoji-door__frame">
+          <div className="shoji-door__paper-grain" />
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div
+              key={`${side}-h-${i}`}
+              className="shoji-door__rail shoji-door__rail--horizontal"
+              style={{ top: `${(i + 1) * 16.6}%` }}
+            />
+          ))}
+          {[25, 50, 75].map((position) => (
+            <div
+              key={`${side}-v-${position}`}
+              className="shoji-door__rail shoji-door__rail--vertical"
+              style={{ left: `${position}%` }}
+            />
+          ))}
+          <div className="shoji-door__handle" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ZenScene() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [mounted, setMounted] = useState(false);
@@ -38,7 +78,7 @@ export default function ZenScene() {
   const mistOpacity = clamp(0.26 - scrollProgress * 0.14, 0.08, 0.26);
 
   return (
-    <div className="relative h-[145vh] min-h-[980px] w-full">
+    <div className="relative h-[116vh] min-h-[820px] w-full">
       <div className="fixed inset-0 overflow-hidden bg-[#e8ddcb]">
         <div
           className="absolute inset-0"
@@ -136,61 +176,8 @@ export default function ZenScene() {
           style={{ opacity: mistOpacity }}
         />
 
-        <div
-          className="absolute inset-y-0 left-0 z-20 w-1/2"
-          style={{
-            transform: `translateX(${-doorOpenAmount * 100}%)`,
-            transition: mounted ? 'transform 120ms linear' : 'none',
-          }}
-        >
-          <div className="absolute inset-0 border-r-[3px] border-[#7c6348] bg-[#efe6d3] shadow-[inset_-18px_0_28px_rgba(0,0,0,0.16)]">
-            <div className="absolute inset-3 sm:inset-4 border-[3px] border-[#806448]">
-              <div className="absolute inset-0 bg-[repeating-linear-gradient(120deg,rgba(140,119,88,0.08)_0px,rgba(140,119,88,0.08)_1px,transparent_1px,transparent_8px)] opacity-70" />
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div
-                  key={`left-h-${i}`}
-                  className="absolute left-0 right-0 h-[3px] bg-[#806448]"
-                  style={{ top: `${(i + 1) * 16.6}%` }}
-                />
-              ))}
-              {[25, 50, 75].map((position) => (
-                <div
-                  key={`left-v-${position}`}
-                  className="absolute top-0 bottom-0 w-[3px] bg-[#806448]"
-                  style={{ left: `${position}%` }}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div
-          className="absolute inset-y-0 right-0 z-20 w-1/2"
-          style={{
-            transform: `translateX(${doorOpenAmount * 100}%)`,
-            transition: mounted ? 'transform 120ms linear' : 'none',
-          }}
-        >
-          <div className="absolute inset-0 border-l-[3px] border-[#7c6348] bg-[#efe6d3] shadow-[inset_18px_0_28px_rgba(0,0,0,0.16)]">
-            <div className="absolute inset-3 sm:inset-4 border-[3px] border-[#806448]">
-              <div className="absolute inset-0 bg-[repeating-linear-gradient(60deg,rgba(140,119,88,0.08)_0px,rgba(140,119,88,0.08)_1px,transparent_1px,transparent_8px)] opacity-70" />
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div
-                  key={`right-h-${i}`}
-                  className="absolute left-0 right-0 h-[3px] bg-[#806448]"
-                  style={{ top: `${(i + 1) * 16.6}%` }}
-                />
-              ))}
-              {[25, 50, 75].map((position) => (
-                <div
-                  key={`right-v-${position}`}
-                  className="absolute top-0 bottom-0 w-[3px] bg-[#806448]"
-                  style={{ left: `${position}%` }}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
+        <ShojiDoor side="left" openAmount={doorOpenAmount} mounted={mounted} />
+        <ShojiDoor side="right" openAmount={doorOpenAmount} mounted={mounted} />
 
         <div
           className="absolute inset-0 z-30 flex items-center justify-center px-6"
@@ -200,7 +187,7 @@ export default function ZenScene() {
           }}
         >
           <div className="w-full max-w-6xl pt-12 sm:pt-0">
-            <div className="max-w-md rounded-[2rem] border border-[#e5dac5]/90 bg-[#f7f0e4]/88 p-6 shadow-[0_28px_70px_rgba(58,43,26,0.12)] backdrop-blur-[3px] sm:max-w-3xl sm:p-10">
+            <div className="hero-copy max-w-md sm:max-w-3xl">
               <p className="text-xs uppercase tracking-[0.36em] text-[#7a6855]">
                 Seattle - Software Engineer
               </p>
@@ -214,7 +201,7 @@ export default function ZenScene() {
                 {statPills.map((pill) => (
                   <span
                     key={pill}
-                    className="rounded-full border border-[#d3c4aa] bg-[#f4ecdf]/90 px-3 py-2 text-center sm:px-4"
+                    className="border border-[#c9b997]/80 bg-[#f7efe1]/72 px-3 py-2 text-center shadow-[0_6px_18px_rgba(58,43,26,0.06)] backdrop-blur-[2px] sm:px-4"
                   >
                     {pill}
                   </span>
@@ -223,7 +210,7 @@ export default function ZenScene() {
               <div className="mt-9 flex flex-col gap-3 sm:mt-12 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
                 <Link
                   href="/projects"
-                  className="inline-flex min-w-44 items-center justify-center rounded-full bg-[#556851] px-7 py-3 text-xs uppercase tracking-[0.22em] text-[#f7f3ea] shadow-[0_12px_28px_rgba(43,61,40,0.2)] transition hover:-translate-y-0.5 hover:bg-[#465743]"
+                  className="inline-flex min-w-44 items-center justify-center bg-[#3f5748] px-7 py-3 text-xs uppercase tracking-[0.22em] text-[#f7f3ea] shadow-[0_12px_28px_rgba(43,61,40,0.2)] transition hover:-translate-y-0.5 hover:bg-[#344a3d]"
                 >
                   Selected work
                 </Link>
@@ -231,7 +218,7 @@ export default function ZenScene() {
                   href="https://www.linkedin.com/in/rowanmeara/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-w-44 items-center justify-center rounded-full border border-[#c7b594] bg-[#f3ecdf]/92 px-7 py-3 text-xs uppercase tracking-[0.22em] text-[#5c5144] transition hover:-translate-y-0.5 hover:bg-[#ece2d2]"
+                  className="inline-flex min-w-44 items-center justify-center border border-[#bba780] bg-[#f7efe1]/76 px-7 py-3 text-xs uppercase tracking-[0.22em] text-[#51473b] shadow-[0_10px_24px_rgba(58,43,26,0.06)] backdrop-blur-[2px] transition hover:-translate-y-0.5 hover:bg-[#efe2cf]"
                 >
                   Connect on LinkedIn
                 </a>
@@ -253,27 +240,27 @@ export default function ZenScene() {
           }}
         >
           <div className="w-full max-w-6xl">
-            <div className="ml-auto max-w-2xl rounded-[2rem] border border-[#ddcfb5]/80 bg-[#f5efe5]/78 p-8 shadow-[0_28px_80px_rgba(58,43,26,0.1)] backdrop-blur-[2px] sm:p-10">
+            <div className="ml-auto max-w-2xl border-l border-[#bca985]/80 bg-[#f7efe1]/64 p-8 shadow-[0_28px_80px_rgba(58,43,26,0.08)] backdrop-blur-[2px] sm:p-10">
               <p className="text-xs uppercase tracking-[0.34em] text-[#776654]">
                 Current focus
               </p>
               <p className="mt-6 font-editorial text-3xl leading-[1.1] text-[#2f281f] sm:text-4xl">
                 Building robust, scalable systems at Niantic with the same attention to product quality, reliability, and execution.
               </p>
-              <div className="mt-8 grid gap-3 sm:grid-cols-3">
-                <div className="rounded-[1.25rem] border border-[#d7c7ad] bg-[#f8f2e7]/90 p-4">
+              <div className="mt-8 grid gap-4 border-t border-[#d8c8a9] pt-6 sm:grid-cols-3">
+                <div>
                   <p className="text-[11px] uppercase tracking-[0.24em] text-[#7f6d59]">
                     Work style
                   </p>
                   <p className="mt-2 text-sm leading-6 text-[#5f5446]">Measured, systems-minded, and detail-oriented.</p>
                 </div>
-                <div className="rounded-[1.25rem] border border-[#d7c7ad] bg-[#f8f2e7]/90 p-4">
+                <div>
                   <p className="text-[11px] uppercase tracking-[0.24em] text-[#7f6d59]">
                     Strength
                   </p>
                   <p className="mt-2 text-sm leading-6 text-[#5f5446]">Turning complexity into something reliable and clear.</p>
                 </div>
-                <div className="rounded-[1.25rem] border border-[#d7c7ad] bg-[#f8f2e7]/90 p-4">
+                <div>
                   <p className="text-[11px] uppercase tracking-[0.24em] text-[#7f6d59]">
                     Lens
                   </p>

@@ -24,18 +24,18 @@ const highlights = [
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#f4efe6] text-stone-900">
+    <div className="min-h-screen bg-[#f6f1e8] text-stone-900">
       <ZenScene />
 
-      <section className="relative -mt-36 overflow-hidden px-6 pb-24 pt-10 sm:-mt-44 sm:pb-28 sm:pt-16">
-        <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.7),transparent_70%)]" />
+      <section className="relative -mt-36 overflow-hidden border-t border-[#cfc0a8] bg-[#f6f1e8] px-6 pb-24 pt-12 sm:-mt-44 sm:pb-28 sm:pt-16">
+        <div className="absolute inset-x-0 top-0 h-40 bg-[linear-gradient(180deg,rgba(255,255,255,0.58),transparent)]" />
         <div className="relative mx-auto max-w-6xl">
-          <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
-            <div className="rounded-[2rem] border border-[#d9cfbe] bg-[#f8f3eb]/96 p-8 shadow-[0_24px_80px_rgba(77,61,39,0.08)] backdrop-blur-[2px] sm:p-10">
+          <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
+            <div className="border-l border-[#bba783] pl-6 sm:pl-8">
               <p className="text-xs uppercase tracking-[0.34em] text-[#7d6b57]">
                 Profile
               </p>
-              <h2 className="font-editorial mt-6 max-w-2xl text-4xl leading-[1.02] tracking-[0.03em] text-[#2f281f] sm:text-5xl">
+              <h2 className="font-editorial mt-6 max-w-3xl text-4xl leading-[1.02] tracking-[0.03em] text-[#2f281f] sm:text-5xl">
                 Calm systems, thoughtful product judgment, and a portfolio that should feel as considered as the work itself.
               </h2>
               <p className="mt-6 max-w-2xl text-base leading-8 text-[#5f5446] sm:text-lg">
@@ -45,7 +45,7 @@ export default function Home() {
               <div className="mt-10 flex flex-wrap gap-4 text-sm text-[#5d5348]">
                 <Link
                   href="/projects"
-                  className="inline-flex items-center justify-center rounded-full border border-[#5b6b55] bg-[#556851] px-6 py-3 uppercase tracking-[0.18em] text-[#f7f3ea] transition hover:-translate-y-0.5 hover:bg-[#4a5b46]"
+                  className="inline-flex items-center justify-center border border-[#3f5748] bg-[#3f5748] px-6 py-3 uppercase tracking-[0.18em] text-[#f7f3ea] transition hover:-translate-y-0.5 hover:bg-[#344a3d]"
                 >
                   View work
                 </Link>
@@ -53,7 +53,7 @@ export default function Home() {
                   href="https://www.linkedin.com/in/rowanmeara/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center rounded-full border border-[#cabb9d] bg-[#f5eee2] px-6 py-3 uppercase tracking-[0.18em] text-[#64584a] transition hover:-translate-y-0.5 hover:border-[#b9a883] hover:bg-[#f0e7d8]"
+                  className="inline-flex items-center justify-center border border-[#cabb9d] bg-[#f8f3eb] px-6 py-3 uppercase tracking-[0.18em] text-[#64584a] transition hover:-translate-y-0.5 hover:border-[#b9a883] hover:bg-[#efe5d5]"
                 >
                   LinkedIn
                 </a>
@@ -68,7 +68,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="rounded-[2rem] border border-[#d8cdb9] bg-[linear-gradient(180deg,rgba(248,243,235,0.98),rgba(239,232,219,0.94))] p-8 shadow-[0_24px_60px_rgba(77,61,39,0.06)] backdrop-blur-[2px] sm:p-10">
+            <aside className="border-t border-[#c9b99b] pt-8 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
               <p className="text-xs uppercase tracking-[0.34em] text-[#7d6b57]">
                 Current lens
               </p>
@@ -79,14 +79,14 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-            </div>
+            </aside>
           </div>
 
-          <div className="mt-8 grid gap-6 md:grid-cols-3">
+          <div className="mt-16 grid gap-px border border-[#d7c8ab] bg-[#d7c8ab] md:grid-cols-3">
             {focusAreas.map((area) => (
-              <article key={area.title} className="rounded-[1.75rem] border border-[#ddd2bf] bg-[#fbf7f0]/92 p-7 shadow-[0_18px_48px_rgba(77,61,39,0.05)] backdrop-blur-[2px]">
-                <div className="h-10 w-10 rounded-full border border-[#c8b79b] bg-[radial-gradient(circle_at_30%_30%,#f8f0e3,#e8dcc8)]" />
-                <h3 className="font-editorial mt-6 text-[1.75rem] leading-[1.05] tracking-[0.03em] text-[#30281e]">
+              <article key={area.title} className="bg-[#fbf8f1] p-7 sm:p-8">
+                <div className="h-px w-12 bg-[#3f5748]" />
+                <h3 className="font-editorial mt-6 text-[1.65rem] leading-[1.08] tracking-[0.03em] text-[#30281e]">
                   {area.title}
                 </h3>
                 <p className="mt-4 text-sm leading-7 text-[#625748]">{area.body}</p>
@@ -96,7 +96,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-y border-[#ddd1be] bg-[#efe7db] px-6 py-20">
+      <section className="border-y border-[#ddd1be] bg-[#eae1d2] px-6 py-20">
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
           <div>
             <p className="text-xs uppercase tracking-[0.34em] text-[#7d6b57]">
@@ -107,8 +107,8 @@ export default function Home() {
             </h2>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2">
-            <div className="rounded-[1.75rem] border border-[#d6c9b4] bg-[#f7f1e6] p-6">
+          <div className="grid gap-px border border-[#cfc0a8] bg-[#cfc0a8] sm:grid-cols-2">
+            <div className="bg-[#f7f1e6] p-6 sm:p-7">
               <p className="text-sm uppercase tracking-[0.24em] text-[#7a6855]">
                 How I build
               </p>
@@ -117,7 +117,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="rounded-[1.75rem] border border-[#d6c9b4] bg-[#f7f1e6] p-6">
+            <div className="bg-[#f7f1e6] p-6 sm:p-7">
               <p className="text-sm uppercase tracking-[0.24em] text-[#7a6855]">
                 What this site should show
               </p>
