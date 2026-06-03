@@ -29,6 +29,147 @@ body {
   font-family: var(--font-serif);
 }
 
+.hero-copy {
+  background:
+    linear-gradient(90deg, rgba(248, 240, 226, 0.82), rgba(248, 240, 226, 0.54) 70%, transparent),
+    linear-gradient(180deg, rgba(255, 251, 243, 0.56), rgba(255, 251, 243, 0));
+  border-left: 1px solid rgba(161, 135, 94, 0.46);
+  box-shadow: 0 26px 80px rgba(58, 43, 26, 0.1);
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  backdrop-filter: blur(2px);
+}
+
+.shoji-door {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(73, 47, 27, 0.28), transparent 7%, transparent 92%, rgba(73, 47, 27, 0.22)),
+    repeating-linear-gradient(87deg, rgba(111, 78, 45, 0.16) 0 1px, transparent 1px 19px),
+    linear-gradient(180deg, #d7b989 0%, #9b6840 36%, #724729 100%);
+}
+
+.shoji-door::before,
+.shoji-door::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.shoji-door::before {
+  background:
+    radial-gradient(circle at 28% 18%, rgba(255, 241, 207, 0.2), transparent 19%),
+    radial-gradient(circle at 76% 74%, rgba(69, 38, 18, 0.2), transparent 28%),
+    repeating-linear-gradient(94deg, rgba(50, 27, 13, 0.13) 0 2px, transparent 2px 12px);
+  mix-blend-mode: multiply;
+  opacity: 0.55;
+}
+
+.shoji-door::after {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 18%, rgba(42, 25, 12, 0.16));
+}
+
+.shoji-door--left {
+  border-right: 4px solid #6c4528;
+  box-shadow:
+    inset -22px 0 36px rgba(26, 15, 8, 0.28),
+    inset 5px 0 12px rgba(255, 231, 184, 0.2),
+    18px 0 42px rgba(44, 26, 13, 0.22);
+}
+
+.shoji-door--right {
+  border-left: 4px solid #6c4528;
+  box-shadow:
+    inset 22px 0 36px rgba(26, 15, 8, 0.28),
+    inset -5px 0 12px rgba(255, 231, 184, 0.2),
+    -18px 0 42px rgba(44, 26, 13, 0.22);
+}
+
+.shoji-door__paper {
+  position: absolute;
+  inset: 1rem;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.54), transparent 21%),
+    radial-gradient(circle at 74% 62%, rgba(204, 181, 136, 0.22), transparent 32%),
+    repeating-linear-gradient(6deg, rgba(123, 91, 55, 0.08) 0 1px, transparent 1px 11px),
+    repeating-linear-gradient(97deg, rgba(255, 255, 255, 0.23) 0 1px, transparent 1px 17px),
+    linear-gradient(180deg, #f4ead5, #dfcda9);
+  box-shadow:
+    inset 0 0 38px rgba(79, 48, 23, 0.18),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+
+.shoji-door__frame {
+  position: absolute;
+  inset: 0.75rem;
+  border: 8px solid #6d4629;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 228, 174, 0.22),
+    inset 0 0 24px rgba(45, 26, 12, 0.16),
+    0 0 0 1px rgba(48, 28, 13, 0.28);
+}
+
+.shoji-door__paper-grain {
+  position: absolute;
+  inset: 8px;
+  background:
+    repeating-linear-gradient(120deg, rgba(139, 105, 65, 0.08) 0 1px, transparent 1px 8px),
+    repeating-linear-gradient(14deg, rgba(255, 255, 255, 0.2) 0 1px, transparent 1px 15px);
+  opacity: 0.85;
+}
+
+.shoji-door__rail {
+  position: absolute;
+  z-index: 1;
+  background:
+    linear-gradient(90deg, rgba(255, 223, 171, 0.2), transparent 30%),
+    repeating-linear-gradient(94deg, rgba(56, 30, 13, 0.16) 0 1px, transparent 1px 9px),
+    #744a2b;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 232, 188, 0.24),
+    inset 0 -1px 0 rgba(31, 17, 8, 0.28),
+    0 2px 7px rgba(46, 27, 12, 0.18);
+}
+
+.shoji-door__rail--horizontal {
+  left: 0;
+  right: 0;
+  height: 8px;
+  transform: translateY(-50%);
+}
+
+.shoji-door__rail--vertical {
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  transform: translateX(-50%);
+}
+
+.shoji-door__handle {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  width: 18px;
+  height: 46px;
+  border: 1px solid rgba(67, 39, 19, 0.62);
+  background:
+    radial-gradient(circle at 42% 35%, rgba(255, 231, 171, 0.3), transparent 25%),
+    linear-gradient(180deg, #6e4a32, #3f2415);
+  box-shadow:
+    inset 0 0 8px rgba(15, 8, 4, 0.35),
+    0 5px 12px rgba(42, 24, 11, 0.24);
+  transform: translateY(-50%);
+}
+
+.shoji-door--left .shoji-door__handle {
+  right: 18px;
+}
+
+.shoji-door--right .shoji-door__handle {
+  left: 18px;
+}
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
