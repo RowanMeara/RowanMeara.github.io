@@ -120,6 +120,15 @@ body {
   box-shadow: 0 -2px 8px rgba(43, 35, 25, 0.28);
 }
 
+.hero-scrim {
+  background: radial-gradient(
+    closest-side,
+    rgba(245, 238, 222, 0.97) 38%,
+    rgba(245, 238, 222, 0.82) 64%,
+    rgba(245, 238, 222, 0) 100%
+  );
+}
+
 .scroll-hint-line {
   position: relative;
   width: 1px;

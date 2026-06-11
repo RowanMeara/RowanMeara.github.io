@@ -212,7 +212,12 @@ export default function ZenScene() {
             pointerEvents: heroFade > 0.5 ? 'auto' : 'none',
           }}
         >
-          <div className="text-center">
+          <div className="relative text-center">
+            <div
+              aria-hidden
+              className="hero-scrim absolute -inset-x-20 -inset-y-14 sm:-inset-x-36 sm:-inset-y-20"
+            />
+            <div className="relative">
             <p className="text-[11px] uppercase tracking-[0.5em] text-[#8a7a63] sm:text-xs">
               Software Engineer · Seattle
             </p>
@@ -247,6 +252,7 @@ export default function ZenScene() {
                 LinkedIn
               </a>
             </nav>
+            </div>
           </div>
         </div>
 
