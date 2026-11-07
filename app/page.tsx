@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import ZenScene from './components/common/ZenScene';
+import ShojiHero from './components/common/ShojiHero';
 
 const focusAreas = [
   {
@@ -19,7 +19,7 @@ const focusAreas = [
 export default function Home() {
   return (
     <div className="bg-[#f6f2e9] text-[#2b251d]">
-      <ZenScene />
+      <ShojiHero />
 
       <section className="border-t border-[#e0d5bf] px-6 py-24 sm:py-28">
         <div className="mx-auto grid max-w-5xl gap-14 lg:grid-cols-[1.15fr_0.85fr]">

@@ -1,0 +1,602 @@
+/*
+ * Shoji hero: a dim tatami room facing closed shoji. Scrolling slides the doors
+ * apart until only their edges remain, framing a raked garden like a painting.
+ *
+ * Scroll state is written by ShojiHero.tsx as unitless custom properties:
+ *   --open   0 → 1  doors sliding apart
+ *   --push   0 → 1  leaning toward the garden
+ *   --intro  1 → 0  name and links fading
+ *   --hint   1 → 0  scroll hint fading
+ */
+
+.track {
+  position: relative;
+  height: 280vh;
+  height: 280svh;
+}
+
+.stage {
+  --open: 0;
+  --push: 0;
+  --intro: 1;
+  --hint: 1;
+
+  /* room geometry (container units resolve against the stage) */
+  --lintel: clamp(28px, 7.5cqh, 80px);
+  --floor: clamp(46px, 12cqh, 124px);
+  --sill: clamp(8px, 1.7cqh, 16px);
+  --heri: clamp(4px, 0.8cqh, 9px);
+  --post: clamp(12px, 2.4cqw, 44px);
+  --peek: clamp(30px, 5.6cqw, 96px);
+  --overlap: clamp(4px, 0.5cqw, 9px);
+  --stile: clamp(6px, 0.85cqw, 14px);
+  --rail: clamp(6px, 1.1cqh, 13px);
+  --bar: clamp(1.5px, 0.2cqw, 3.5px);
+  --door-w: calc(50cqw - var(--post) + var(--overlap) / 2);
+  --travel: calc(var(--door-w) - var(--peek));
+  --tuck: 12px;
+
+  --wood: #7f6142;
+  --wood-dark: #5f472f;
+  --kumiko: #977653;
+  --ink: #2b251d;
+  --accent: #ae4f2c;
+
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  container-type: size;
+  isolation: isolate;
+  background: #1c150f;
+}
+
+/* ------------------------------------------------------------------ garden */
+
+.garden {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: #e8dfcb;
+}
+
+.garden::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 78% 72% at 50% 48%, transparent 58%, rgba(34, 22, 12, 0.3) 100%);
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 42% 40%;
+  transform-origin: 42% 40%;
+  will-change: transform;
+  user-select: none;
+}
+
+.layerBack {
+  transform: scale(calc(1 + var(--push) * 0.035));
+}
+
+.layerGround {
+  transform: scale(calc(1 + var(--push) * 0.08));
+}
+
+.leaves {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--open);
+}
+
+.leaf {
+  position: absolute;
+  top: -6%;
+  display: block;
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+.leaf svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 40%;
+  animation: flutter 5s ease-in-out infinite alternate;
+  filter: drop-shadow(0 2px 2px rgba(60, 28, 10, 0.22));
+}
+
+@keyframes fall {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(var(--drift, -12cqw), 118cqh, 0);
+  }
+}
+
+@keyframes flutter {
+  0% {
+    transform: rotate(-38deg) rotateX(0deg);
+  }
+  50% {
+    transform: rotate(32deg) rotateX(58deg);
+  }
+  100% {
+    transform: rotate(-12deg) rotateX(12deg);
+  }
+}
+
+/* ------------------------------------------------------------ room + doors */
+
+.frame {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  transform: scale(calc(1 + var(--push) * 0.025));
+  transform-origin: 50% 46%;
+  will-change: transform;
+}
+
+.door {
+  position: absolute;
+  top: calc(var(--lintel) - var(--tuck));
+  bottom: calc(var(--floor) - var(--tuck));
+  width: var(--door-w);
+  pointer-events: auto;
+  background: linear-gradient(90deg, var(--wood-dark), var(--wood) 6%, var(--wood) 94%, var(--wood-dark));
+  box-shadow:
+    inset 0 0 0 1px rgba(36, 24, 14, 0.55),
+    inset 0 1px 0 rgba(255, 236, 204, 0.12);
+  will-change: transform;
+}
+
+.doorLeft {
+  left: var(--post);
+  z-index: 2;
+  transform: translate3d(calc(var(--open) * -1 * var(--travel)), 0, 0);
+  box-shadow:
+    inset 0 0 0 1px rgba(36, 24, 14, 0.55),
+    inset 0 1px 0 rgba(255, 236, 204, 0.12),
+    14px 0 26px rgba(30, 19, 10, 0.2);
+}
+
+.doorRight {
+  right: var(--post);
+  z-index: 1;
+  transform: translate3d(calc(var(--open) * var(--travel)), 0, 0);
+}
+
+.paper {
+  position: absolute;
+  top: calc(var(--tuck) + var(--rail));
+  left: var(--stile);
+  right: var(--stile);
+  bottom: calc(var(--tuck) + 15% + var(--rail) * 2);
+  overflow: hidden;
+  background: #efe5cf;
+  box-shadow: inset 0 0 0 1px rgba(70, 48, 26, 0.28);
+}
+
+/* Lit paper, positioned in stage coordinates so the light and the leaf shadow
+   stay put while the doors slide underneath them. */
+.paperLight {
+  position: absolute;
+  top: calc(-1 * (var(--lintel) + var(--rail)));
+  width: 100cqw;
+  height: 100cqh;
+  background:
+    radial-gradient(ellipse 44% 50% at 72% 30%, rgba(255, 250, 236, 0.95), rgba(255, 250, 236, 0) 72%),
+    radial-gradient(ellipse 95% 85% at 50% 42%, rgba(255, 246, 226, 0.6), rgba(255, 246, 226, 0) 78%),
+    url('/hero/washi.png'),
+    linear-gradient(180deg, #f1e7d3 0%, #e6d9bf 100%);
+  background-size: auto, auto, 288px 288px, auto;
+  background-blend-mode: screen, screen, multiply, normal;
+}
+
+.paperLightLeft {
+  left: calc(-1 * (var(--post) + var(--stile)));
+  transform: translate3d(calc(var(--open) * var(--travel)), 0, 0);
+}
+
+.paperLightRight {
+  left: calc(-1 * (100cqw - var(--post) - var(--door-w) + var(--stile)));
+  transform: translate3d(calc(var(--open) * -1 * var(--travel)), 0, 0);
+}
+
+.paperLight::after {
+  content: '';
+  position: absolute;
+  top: -3%;
+  right: -4%;
+  width: max(74cqw, 72cqh);
+  aspect-ratio: 1.6;
+  background: url('/hero/leaf-shadow.webp') no-repeat right top / contain;
+  opacity: 0.3;
+  mix-blend-mode: multiply;
+  transform-origin: 100% 0;
+  animation: sway 9s ease-in-out infinite alternate;
+}
+
+@keyframes sway {
+  from {
+    transform: rotate(-0.9deg);
+  }
+  to {
+    transform: rotate(1.1deg) translate3d(-0.5cqw, 0.4cqh, 0);
+  }
+}
+
+.lattice {
+  position: absolute;
+  top: calc(var(--tuck) + var(--rail));
+  left: var(--stile);
+  right: var(--stile);
+  bottom: calc(var(--tuck) + 15% + var(--rail) * 2);
+  background-image:
+    linear-gradient(90deg, transparent calc(100% - var(--bar)), var(--kumiko) calc(100% - var(--bar))),
+    linear-gradient(180deg, transparent calc(100% - var(--bar)), var(--kumiko) calc(100% - var(--bar)));
+  background-size: 25% 100%, 100% calc(100% / 7);
+  background-position: calc(var(--bar) / 2) 0, 0 calc(var(--bar) / 2);
+}
+
+.koshi {
+  position: absolute;
+  left: var(--stile);
+  right: var(--stile);
+  bottom: calc(var(--tuck) + var(--rail));
+  height: 15%;
+  background:
+    repeating-linear-gradient(90deg, rgba(38, 25, 13, 0.32) 0 1px, transparent 1px calc(100% / 5)),
+    repeating-linear-gradient(90deg, rgba(255, 232, 196, 0.045) 0 2px, transparent 2px 9px),
+    linear-gradient(180deg, #7a5b3b, #684c31);
+  box-shadow: inset 0 2px 4px rgba(30, 19, 10, 0.35);
+}
+
+.pull {
+  position: absolute;
+  top: 54%;
+  width: clamp(9px, 0.85cqw, 15px);
+  height: clamp(26px, 5.4cqh, 50px);
+  border-radius: 999px;
+  background: radial-gradient(circle at 50% 38%, #2c1f14, #120b06 72%);
+  box-shadow:
+    inset 0 2px 3px rgba(0, 0, 0, 0.6),
+    0 0 0 2px #5a432c,
+    0 0 0 3px rgba(255, 236, 205, 0.14);
+}
+
+.doorLeft .pull {
+  right: calc(var(--stile) + 1.4cqw);
+}
+
+.doorRight .pull {
+  left: calc(var(--stile) + 1.4cqw);
+}
+
+.lintel {
+  position: absolute;
+  inset: 0 0 auto;
+  height: var(--lintel);
+  z-index: 5;
+  background:
+    repeating-linear-gradient(180deg, rgba(255, 234, 204, 0.035) 0 1px, transparent 1px 6px),
+    linear-gradient(180deg, #24180f 0%, #3a2a1c 58%, #2c1f15 100%);
+  box-shadow: 0 8px 22px rgba(16, 10, 5, 0.42);
+}
+
+.lintel::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 2px;
+  background: rgb(255, 226, 182);
+  opacity: calc(0.12 + var(--open) * 0.38);
+}
+
+.post {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--post);
+  z-index: 6;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 234, 204, 0.03) 0 1px, transparent 1px 5px),
+    linear-gradient(90deg, #20150d, #33251a 50%, #271b12);
+  box-shadow: 0 0 24px rgba(16, 10, 5, 0.5);
+}
+
+.post::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, rgba(255, 226, 182, 0.1), rgba(255, 226, 182, 0.75) 45%, rgba(255, 226, 182, 0.25));
+  opacity: calc(0.15 + var(--open) * 0.85);
+}
+
+.postLeft {
+  left: 0;
+}
+
+.postLeft::after {
+  right: 0;
+}
+
+.postRight {
+  right: 0;
+}
+
+.postRight::after {
+  left: 0;
+}
+
+.floor {
+  position: absolute;
+  inset: auto 0 0;
+  height: var(--floor);
+  z-index: 5;
+  background:
+    linear-gradient(
+      180deg,
+      #4b3725 0,
+      #36271b var(--sill),
+      #1d1915 var(--sill),
+      #2a241e calc(var(--sill) + var(--heri)),
+      transparent calc(var(--sill) + var(--heri))
+    ),
+    repeating-linear-gradient(180deg, rgba(64, 54, 26, 0.24) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg, rgba(255, 246, 210, 0.04) 0 1px, transparent 1px 3px),
+    linear-gradient(180deg, #91845a, #7b6f49);
+  box-shadow: 0 -6px 18px rgba(16, 10, 5, 0.35);
+}
+
+/* the two door grooves in the sill */
+.floor::before {
+  content: '';
+  position: absolute;
+  inset: calc(var(--sill) * 0.32) 0 auto;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 calc(var(--sill) * 0.34) 0 rgba(0, 0, 0, 0.5);
+}
+
+/* daylight spilling onto the tatami as the doors part */
+.floor::after {
+  content: '';
+  position: absolute;
+  inset: calc(var(--sill) + var(--heri)) 0 0;
+  background: radial-gradient(ellipse 62% 150% at 50% 0%, rgba(255, 236, 198, 0.5), rgba(255, 236, 198, 0) 72%);
+  opacity: calc(0.2 + var(--open) * 0.8);
+}
+
+/* -------------------------------------------------------------- intro text */
+
+.intro {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 13%;
+  max-width: 76%;
+  transform: translateY(-54%);
+  opacity: var(--intro);
+  color: var(--ink);
+}
+
+/* soften the lattice behind the words, like light pooling on the paper */
+.intro::before {
+  content: '';
+  position: absolute;
+  inset: -24% -18%;
+  z-index: -1;
+  background: radial-gradient(closest-side, rgba(247, 240, 226, 0.94) 52%, rgba(247, 240, 226, 0) 100%);
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: #85765f;
+}
+
+.name {
+  margin-top: 1.1rem;
+  font-size: clamp(2.75rem, min(6.3cqw, 11cqh), 6.75rem);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+
+.rule {
+  width: 2.5rem;
+  height: 3px;
+  margin-top: 1.6rem;
+  background: var(--accent);
+}
+
+.tagline {
+  max-width: 24rem;
+  margin-top: 1.4rem;
+  font-size: 15px;
+  line-height: 1.75;
+  color: #5b5143;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.75rem;
+  margin-top: 2rem;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.links a {
+  padding-bottom: 4px;
+  border-bottom: 1px solid #c4b496;
+  color: #4d4438;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.links a:hover {
+  border-color: var(--accent);
+  color: var(--ink);
+}
+
+.links a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+@media (min-width: 768px) {
+  .tagline {
+    font-size: 16px;
+  }
+}
+
+/* On narrow screens each door is too slim for the name: centre it across both. */
+@media (max-width: 899px) {
+  .intro {
+    left: calc(50cqw - var(--post));
+    width: min(84cqw, 26rem);
+    max-width: none;
+    transform: translate(-50%, -54%);
+    text-align: center;
+  }
+
+  .name {
+    font-size: clamp(2.4rem, 12.5cqw, 4rem);
+  }
+
+  .rule {
+    margin-inline: auto;
+  }
+
+  .tagline {
+    margin-inline: auto;
+  }
+
+  .links {
+    justify-content: center;
+  }
+
+  /* keep the door pulls and the front door's shadow clear of the centred text */
+  .pull {
+    top: 72%;
+  }
+
+  .doorLeft {
+    box-shadow:
+      inset 0 0 0 1px rgba(36, 24, 14, 0.55),
+      inset 0 1px 0 rgba(255, 236, 204, 0.12),
+      4px 0 10px rgba(30, 19, 10, 0.12);
+  }
+}
+
+/* ------------------------------------------------------------- scroll hint */
+
+.hint {
+  position: absolute;
+  z-index: 20;
+  left: 50%;
+  bottom: calc(var(--floor) + 4cqh);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transform: translateX(-50%);
+  opacity: var(--hint);
+  pointer-events: none;
+}
+
+.hint span {
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: rgba(248, 238, 218, 0.82);
+}
+
+.hint i {
+  position: relative;
+  width: 1px;
+  height: 30px;
+  overflow: hidden;
+  background: rgba(248, 238, 218, 0.28);
+}
+
+.hint i::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -45%;
+  width: 100%;
+  height: 45%;
+  background: linear-gradient(180deg, transparent, rgba(255, 248, 232, 0.95));
+  animation: hint 2.6s ease-in-out infinite;
+}
+
+@keyframes hint {
+  0% {
+    top: -45%;
+  }
+  65%,
+  100% {
+    top: 110%;
+  }
+}
+
+/* -------------------------------------------------------------- pausing */
+
+.stage[data-visible='false'] .leaf,
+.stage[data-visible='false'] .leaf svg,
+.stage[data-visible='false'] .paperLight::after,
+.stage[data-visible='false'] .hint i::after {
+  animation-play-state: paused;
+}
+
+/* --------------------------------------------------------- reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    height: 200vh;
+    height: 200svh;
+  }
+
+  /* no sliding or zooming: the doors simply fade to reveal the garden */
+  .frame,
+  .layer,
+  .doorLeft,
+  .doorRight,
+  .paperLightLeft,
+  .paperLightRight {
+    transform: none;
+  }
+
+  .doorLeft,
+  .doorRight {
+    opacity: calc(1 - var(--open));
+  }
+
+  .leaves {
+    display: none;
+  }
+
+  .paperLight::after,
+  .hint i::after {
+    animation: none;
+  }
+}
