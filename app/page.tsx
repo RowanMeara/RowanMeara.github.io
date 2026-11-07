@@ -42,7 +42,15 @@ export default function Home() {
                 Now
               </dt>
               <dd className="mt-2 text-[15px] leading-7 text-[#534a3c]">
-                Engineering on Pokémon GO at Niantic, focused on robust production systems.
+                Software engineer at OpenAI.
+              </dd>
+            </div>
+            <div>
+              <dt className="text-[11px] uppercase tracking-[0.3em] text-[#9a8a70]">
+                Before
+              </dt>
+              <dd className="mt-2 text-[15px] leading-7 text-[#534a3c]">
+                Tech lead for the Pokémon GO backend at Niantic, across five teams and 100M+ monthly players.
               </dd>
             </div>
             <div>
