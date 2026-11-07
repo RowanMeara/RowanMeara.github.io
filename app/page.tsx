@@ -3,16 +3,16 @@ import ShojiHero from './components/common/ShojiHero';
 
 const focusAreas = [
   {
-    title: 'Distributed systems',
-    body: 'Services and data flows designed to stay predictable under real traffic — resilient, observable, and calm to operate.',
+    title: 'Scale',
+    body: 'High-throughput services and data pipelines designed for the load that is coming, not just the load that is here today.',
   },
   {
-    title: 'Product engineering',
-    body: 'Features shipped with equal weight on architecture, usability, and business context, rather than optimizing one in isolation.',
+    title: 'Consistency',
+    body: 'Clear guarantees about what is true and when — data that stays correct through retries, partitions, and partial failure, so everything downstream can trust it.',
   },
   {
-    title: 'Craft',
-    body: 'Code, interfaces, and decisions that age well — clear enough to hand off, simple enough to still like a year later.',
+    title: 'Reliability',
+    body: 'Systems that degrade gracefully and are calm to operate: observable, well understood, and simple enough to hand off.',
   },
 ];
 
@@ -28,11 +28,13 @@ export default function Home() {
               About
             </p>
             <h2 className="font-editorial mt-6 text-3xl leading-[1.2] text-[#2b251d] sm:text-[2.5rem]">
-              A software engineer in Seattle, building systems that stay calm in production.
+              A distributed systems engineer, building for massive scale without giving up on correctness.
             </h2>
             <p className="mt-6 max-w-xl text-base leading-8 text-[#5d5345]">
-              I work across distributed systems, backend services, and modern web stacks,
-              with a working style centered on clarity, reliability, and decisions that age well.
+              I design and run backend systems where the volume is high and mistakes are expensive:
+              high-throughput services, large data pipelines, and the consistency guarantees that keep
+              them honest. I like the hard parts — failure modes, data integrity, latency — and making
+              them simple enough for a team to operate with confidence.
             </p>
           </div>
 
@@ -42,7 +44,7 @@ export default function Home() {
                 Now
               </dt>
               <dd className="mt-2 text-[15px] leading-7 text-[#534a3c]">
-                Software engineer at OpenAI.
+                Software engineer on the Ads team at OpenAI.
               </dd>
             </div>
             <div>
@@ -50,7 +52,7 @@ export default function Home() {
                 Before
               </dt>
               <dd className="mt-2 text-[15px] leading-7 text-[#534a3c]">
-                Tech lead for the Pokémon GO backend at Niantic, across five teams and 100M+ monthly players.
+                Tech lead for the Pokémon GO backend at Niantic.
               </dd>
             </div>
             <div>
@@ -58,7 +60,7 @@ export default function Home() {
                 Focus
               </dt>
               <dd className="mt-2 text-[15px] leading-7 text-[#534a3c]">
-                Distributed systems, backend services, and product-minded web engineering.
+                Large-scale distributed systems, data consistency, and high-throughput backend services.
               </dd>
             </div>
             <div>

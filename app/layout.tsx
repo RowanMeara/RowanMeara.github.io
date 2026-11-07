@@ -4,7 +4,7 @@ import Footer from "./components/layout/Footer";
 
 export const metadata: Metadata = {
   title: "Rowan Meara - Software Engineer",
-  description: "Portfolio website of Rowan Meara, Software Engineer",
+  description: "Rowan Meara, software engineer building large-scale distributed systems.",
 };
 
 export default function RootLayout({

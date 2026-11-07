@@ -162,7 +162,7 @@ export default function ShojiHero() {
               </h1>
               <div className={styles.rule} />
               <p className={styles.tagline}>
-                Building reliable systems and considered product experiences.
+                Building distributed systems that stay correct at massive scale.
               </p>
               <nav className={styles.links} aria-label="Elsewhere">
                 <Link href="/projects">Selected Work</Link>
